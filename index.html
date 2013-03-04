@@ -22,13 +22,16 @@ WN.init_phonegap=function() {
    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, WN.init_FS_ready, WN.init_FS_fail);
    
    // TIMER TEST
-   window.setInterval(function(){WN.debug("TIMER INTERVAL TEST...");}, 3000);
-   window.setTimeout(function(){WN.debug("TIMER TIMEOUT TEST...");}, 5000);
+   window.setInterval(function(){var d = new Date();WN.debug("TIMER INTERVAL TEST..."+ d.toUTCString());}, 60000);
+   window.setTimeout(function(){var d = new Date();WN.debug("TIMER TIMEOUT TEST..."+ d.toUTCString());}, 5000);
+   window.setInterval(function(){WN.server_download();}, 5000);
    
 };
 
 WN.gap_root=null;
 WN.bname_cache="webnews.txt";
+WN.server_url="http://webnews.applh.com";
+WN.server_uri="/";
 WN.init_FS_ready=function (fileSystem) {
    WN.debug("file webnews.txt");
    WN.gap_root=fileSystem.root;
@@ -44,14 +47,14 @@ WN.init_FS_prepare=function (fileEntry) {
 }
 WN.init_FS_start=function (writer) {
    WN.debug("write into file");
-   writer.write("http://Applh.com");
+   writer.write(WN.server_name+WN.server_uri);
 }
 
 WN.server_download=function() {
    // !! Assumes filePath is a valid path on the device
    filePath=WN.file_cache;
    var fileTransfer = new FileTransfer();
-   var uri = encodeURI("http://applh.com/robots.txt");
+   var uri = encodeURI(WN.server_name+WN.server_uri);
 
    fileTransfer.download(
     uri,
@@ -95,9 +98,7 @@ WN.init_FS_fail=function (evt) {
 WN.debug_step=0;
 WN.debug=function(msg) {
   WN.debug_step++;
-  
   //alert(WN.debug_step + '. ' +msg);
- 
   var element = document.getElementById('debug-info');
   element.innerHTML+='<div>'+WN.debug_step+'. '+msg+'</div>';
 };
