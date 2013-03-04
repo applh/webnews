@@ -21,26 +21,21 @@ WN.init_phonegap=function() {
    WN.debug("FILE SYSTEM");
    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, WN.init_FS_ready, WN.init_FS_fail);
 };
+
+WN.bname_cache="webnews.txt";
 WN.init_FS_ready=function (fileSystem) {
    WN.debug("file webnews.txt");
-   fileSystem.root.getFile("webnews.txt", {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
+   fileSystem.root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
    
    WN.debug("server download");
-   WN.file_cache=fileSystem.root.fullPath+"/webnews.txt";
-   WN.server_download();
-   
-   WN.debug("file readlist");
-   //WN.file_readlist();
-   
+   WN.file_cache=fileSystem.root.fullPath+"/"+WN.bname_cache;
+   WN.server_download();   
 }
 WN.init_FS_prepare=function (fileEntry) {
    fileEntry.createWriter(WN.init_FS_start, WN.init_FS_fail);
 }
 WN.init_FS_start=function (writer) {
    writer.write("http://Applh.com");
-}
-WN.init_FS_fail=function (evt) {
-   WN.debug(evt.target.error.code);
 }
 
 WN.server_download=function() {
@@ -54,6 +49,8 @@ WN.server_download=function() {
     filePath,
     function(entry) {
         WN.debug("download complete: " + entry.fullPath);
+        WN.file_config_load();
+        
     },
     function(error) {
         WN.debug("download error source " + error.source);
@@ -62,6 +59,27 @@ WN.server_download=function() {
     }
    );
 };
+
+
+WN.file_config_load=function () {
+   fileSystem.root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
+};
+WN.config_prepare=function(fileEntry) {
+ fileEntry.file(WN.config_read, WN.init_FS_fail);
+};
+WN.config_read=function(file) {
+   var reader = new FileReader();
+   reader.onloadend = function (evt) {
+      WN.debug("Read as text");
+      WN.config_text=evt.target.result;
+      WN.debug(WN.config_text);
+   };
+   reader.readAsText(file);
+};
+
+WN.init_FS_fail=function (evt) {
+   WN.debug(evt.target.error.code);
+}
 
 WN.debug_step=0;
 WN.debug=function(msg) {
