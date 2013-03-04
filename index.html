@@ -7,6 +7,13 @@
 var WN={};
 WN.init_phonegap=function() {
  alert("A. DEVICEREADY");
+ document.write("<div>A. DEVICEREADY</div>");
+};
+
+
+WN.debug=function(msg) {
+ alert(msg);
+ document.write(msg);
 };
 
 // Wait for Cordova to load
