@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns     = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "com.applh.webnews"
+        version   = "0.1">
+    <name>WebNews</name>
+
+    <description>
+WebNews links to a website and provide offline features.
+    </description>
+
+    <author href="http://Applh.com" email="ipad@applh.com">
+        Applh.com
+    </author>
+
+   <preference name="permissions" value="none"/>
+
+    <preference name="phonegap-version" value="2.3.0" />
+    <preference name="orientation"      value="landscape" />
+    <preference name="target-device"    value="tablet" />
+    <preference name="fullscreen"       value="false" />
+    <preference name="webviewbounce"    value="true" />    
+    <preference name="exit-on-suspend"  value="true" />
+
+    <icon src="icon.png" />
+    <icon src="icon-57.png"            gap:platform="ios"        width="57" height="57" />
+    <icon src="icon-72.png"            gap:platform="ios"        width="72" height="72" />
+</widget>
