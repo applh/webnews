@@ -20,6 +20,11 @@ WN.init_phonegap=function() {
 
    WN.debug("FILE SYSTEM");
    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, WN.init_FS_ready, WN.init_FS_fail);
+   
+   // TIMER TEST
+   window.setInterval(function(){WN.debug("TIMER INTERVAL TEST...");}, 3000);
+   window.setTimeout(function(){WN.debug("TIMER TIMEOUT TEST...");}, 5000);
+   
 };
 
 WN.gap_root=null;
