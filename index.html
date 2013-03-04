@@ -47,7 +47,7 @@ WN.debug_step=0;
 WN.debug=function(msg) {
   WN.debug_step++;
   
-  alert(WN.debug_step + '. ' +msg);
+  //alert(WN.debug_step + '. ' +msg);
  
   var element = document.getElementById('debug-info');
   element.innerHTML+='<div>'+WN.debug_step+'. '+msg+'</div>';
