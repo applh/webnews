@@ -27,7 +27,7 @@ WN.init_FS_ready=function (fileSystem) {
    
    WN.debug("server download");
    WN.file_cache=fileSystem.root.fullPath+"/webnews.txt";
-   //WN.server_download();
+   WN.server_download();
    
    WN.debug("file readlist");
    //WN.file_readlist();
@@ -42,6 +42,26 @@ WN.init_FS_start=function (writer) {
 WN.init_FS_fail=function (evt) {
    WN.debug(evt.target.error.code);
 }
+
+WN.server_download=function() {
+   // !! Assumes filePath is a valid path on the device
+   filePath=WN.file_cache;
+   var fileTransfer = new FileTransfer();
+   var uri = encodeURI("http://applh.com/robots.txt");
+
+   fileTransfer.download(
+    uri,
+    filePath,
+    function(entry) {
+        WN.debug("download complete: " + entry.fullPath);
+    },
+    function(error) {
+        WN.debug("download error source " + error.source);
+        WN.debug("download error target " + error.target);
+        WN.debug("upload error code" + error.code);
+    }
+   );
+};
 
 WN.debug_step=0;
 WN.debug=function(msg) {
