@@ -43,7 +43,13 @@ WN.init_phonegap=function() {
    window.setInterval(function(){var d = new Date();WN.debug("TIMER INTERVAL TEST..."+ d.toUTCString());}, 60000);
    window.setTimeout(function(){var d = new Date();WN.debug("TIMER TIMEOUT TEST..."+ d.toUTCString());}, 5000);
    window.setInterval(function(){WN.server_download();}, 5000);
-   
+
+   // GEO LOCATION
+   // Get the most accurate position updates available on the
+   // device.
+   var geo_options = { enableHighAccuracy: true };
+   WN.gap_geoid = navigator.geolocation.watchPosition(WN.geo_ok, WN.geo_error, geo_options);
+
 };
 
 WN.gap_root=null;
@@ -58,15 +64,15 @@ WN.init_FS_ready=function (fileSystem) {
    WN.debug("server download");
    WN.file_cache=fileSystem.root.fullPath+"/"+WN.bname_cache;
    WN.server_download();   
-}
+};
 WN.init_FS_prepare=function (fileEntry) {
    WN.debug("create writer");
    fileEntry.createWriter(WN.init_FS_start, WN.init_FS_fail);
-}
+};
 WN.init_FS_start=function (writer) {
    WN.debug("write into file");
    writer.write(WN.server_url+WN.server_uri);
-}
+};
 
 WN.server_download=function() {
    // !! Assumes filePath is a valid path on the device
@@ -90,19 +96,19 @@ WN.server_download=function() {
 };
 
 WN.file_config_load=function () {
-   WN.debug("LOAD CONFIG FILE");
+   //WN.debug("LOAD CONFIG FILE");
    WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
 };
 WN.config_prepare=function(fileEntry) {
-   WN.debug("CONFIG... file entry");
+   //WN.debug("CONFIG... file entry");
    fileEntry.file(WN.config_read, WN.init_FS_fail);
 };
 WN.config_read=function(file) {
-   WN.debug("CONFIG... file reader");
+   //WN.debug("CONFIG... file reader");
 
    var reader = new FileReader();
    reader.onloadend = function (evt) {
-      WN.debug("CONFIG... read as text");
+      //WN.debug("CONFIG... read as text");
       WN.config_text=evt.target.result;
       WN.debug(WN.config_text);
    };
@@ -111,7 +117,7 @@ WN.config_read=function(file) {
 
 WN.init_FS_fail=function (evt) {
    WN.debug(evt.target.error.code);
-}
+};
 
 WN.debug_step=0;
 WN.debug=function(msg) {
@@ -120,6 +126,32 @@ WN.debug=function(msg) {
   var element = document.getElementById('debug-info');
   element.innerHTML+='<div>'+WN.debug_step+'. '+msg+'</div>';
 };
+
+
+WN.geo_ok=function (position) {
+   var msg='';
+   msg= 'Latitude: '           + position.coords.latitude              + '<br />' +
+        'Longitude: '          + position.coords.longitude             + '<br />' +
+        'Altitude: '           + position.coords.altitude              + '<br />' +
+        'Accuracy: '           + position.coords.accuracy              + '<br />' +
+        'Altitude Accuracy: '  + position.coords.altitudeAccuracy      + '<br />' +
+        'Heading: '            + position.coords.heading               + '<br />' +
+        'Speed: '              + position.coords.speed                 + '<br />' +
+        'Timestamp: '          + position.timestamp          + '<br />';
+
+   WN.debug(msg);
+   WN.server_uri='/lat='+position.coords.latitude
+                 +'/lon='+position.coords.latitude
+                 +'/alt='+position.coords.altitude
+                 +'/speed='+position.coords.speed
+                 +'/time='+position.timestamp
+                 +'/';
+};
+WN.geo_error=function (error) {
+   var msg='code: '+ error.code+ ', message: ' + error.message;
+   WN.debug(msg);         
+};
+
 
 
 // Wait for Cordova to load
