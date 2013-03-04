@@ -22,19 +22,23 @@ WN.init_phonegap=function() {
    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, WN.init_FS_ready, WN.init_FS_fail);
 };
 
+WN.gap_root=null;
 WN.bname_cache="webnews.txt";
 WN.init_FS_ready=function (fileSystem) {
    WN.debug("file webnews.txt");
-   fileSystem.root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
+   WN.gap_root=fileSystem.root;
+   WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
    
    WN.debug("server download");
    WN.file_cache=fileSystem.root.fullPath+"/"+WN.bname_cache;
    WN.server_download();   
 }
 WN.init_FS_prepare=function (fileEntry) {
+   WN.debug("create writer");
    fileEntry.createWriter(WN.init_FS_start, WN.init_FS_fail);
 }
 WN.init_FS_start=function (writer) {
+   WN.debug("write into file");
    writer.write("http://Applh.com");
 }
 
@@ -49,8 +53,7 @@ WN.server_download=function() {
     filePath,
     function(entry) {
         WN.debug("download complete: " + entry.fullPath);
-        WN.file_config_load();
-        
+        WN.file_config_load();        
     },
     function(error) {
         WN.debug("download error source " + error.source);
@@ -60,17 +63,20 @@ WN.server_download=function() {
    );
 };
 
-
 WN.file_config_load=function () {
-   fileSystem.root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
+   WN.debug("LOAD CONFIG FILE");
+   WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
 };
 WN.config_prepare=function(fileEntry) {
- fileEntry.file(WN.config_read, WN.init_FS_fail);
+   WN.debug("CONFIG... file entry");
+   fileEntry.file(WN.config_read, WN.init_FS_fail);
 };
 WN.config_read=function(file) {
+   WN.debug("CONFIG... file reader");
+
    var reader = new FileReader();
    reader.onloadend = function (evt) {
-      WN.debug("Read as text");
+      WN.debug("CONFIG... read as text");
       WN.config_text=evt.target.result;
       WN.debug(WN.config_text);
    };
