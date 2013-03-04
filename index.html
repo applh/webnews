@@ -47,14 +47,14 @@ WN.init_FS_prepare=function (fileEntry) {
 }
 WN.init_FS_start=function (writer) {
    WN.debug("write into file");
-   writer.write(WN.server_name+WN.server_uri);
+   writer.write(WN.server_url+WN.server_uri);
 }
 
 WN.server_download=function() {
    // !! Assumes filePath is a valid path on the device
    filePath=WN.file_cache;
    var fileTransfer = new FileTransfer();
-   var uri = encodeURI(WN.server_name+WN.server_uri);
+   var uri = encodeURI(WN.server_url+WN.server_uri);
 
    fileTransfer.download(
     uri,
