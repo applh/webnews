@@ -10,6 +10,7 @@ WN.init_phonegap=function() {
 };
 WN.init_FS_ready=function (fileSystem) {
    fileSystem.root.getFile("webnews.txt", {create: true, exclusive: false}, WN.init_FS_prepare, fail);
+   WN.file_cache=fileSystem.root.fullPath+"/webnews.txt";
 }
 WN.init_FS_prepare=function (fileEntry) {
    fileEntry.createWriter(WN.init_FS_start, WN.init_FS_fail);
@@ -20,6 +21,26 @@ WN.init_FS_start=function (writer) {
 WN.init_FS_fail=function (error) {
    console.log(error.code);
 }
+
+WN.server_download=function() {
+   // !! Assumes filePath is a valid path on the device
+   filePath=WN.file_cache;
+   var fileTransfer = new FileTransfer();
+   var uri = encodeURI("http://applh.com/robots.txt");
+
+   fileTransfer.download(
+    uri,
+    filePath,
+    function(entry) {
+        console.log("download complete: " + entry.fullPath);
+    },
+    function(error) {
+        console.log("download error source " + error.source);
+        console.log("download error target " + error.target);
+        console.log("upload error code" + error.code);
+    }
+   );
+};
 
 // Wait for Cordova to load
 document.addEventListener("deviceready", WN.init_phonegap, false);
