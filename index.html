@@ -5,15 +5,53 @@
    <script src="phonegap.js"></script>
    <script type="text/javascript" charset="utf-8">
 var WN={};
+
 WN.init_phonegap=function() {
- alert("A. DEVICEREADY");
- document.write("<div>A. DEVICEREADY</div>");
+ 
+   WN.debug("DEVICE READY");
+
+   WN.debug("DEVICE INFO");
+   var element = document.getElementById('device-info');
+   element.innerHTML = 'Device Name: '     + device.name     + '<br />' + 
+                            'Device Cordova: '  + device.cordova + '<br />' + 
+                            'Device Platform: ' + device.platform + '<br />' + 
+                            'Device UUID: '     + device.uuid     + '<br />' + 
+                            'Device Version: '  + device.version  + '<br />';
+
+   WN.debug("FILE SYSTEM");
+
+   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, WN.init_FS_ready, WN.init_FS_fail);
 };
+WN.init_FS_ready=function (fileSystem) {
+   alert("A");
+   fileSystem.root.getFile("webnews.txt", {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
+   
+   alert("B");
+   WN.file_cache=fileSystem.root.fullPath+"/webnews.txt";
+   //WN.server_download();
+   
+   alert("C");
+   //WN.file_readlist();
+   
+}
+WN.init_FS_prepare=function (fileEntry) {
+   //fileEntry.createWriter(WN.init_FS_start, WN.init_FS_fail);
+}
+WN.init_FS_start=function (writer) {
+   //writer.write("http://Applh.com");
+}
+WN.init_FS_fail=function (evt) {
+   WN.debug(evt.target.error.code);
+}
 
-
+WN.debug_step=0;
 WN.debug=function(msg) {
- alert(msg);
- document.write(msg);
+  WN.debug_step++;
+  
+  alert(msg);
+ 
+  var element = document.getElementById('debug-info');
+  element.innerHTML+='<div>'+msg+'</div>';
 };
 
 // Wait for Cordova to load
@@ -23,5 +61,8 @@ document.addEventListener("deviceready", WN.init_phonegap, false);
  </head>
  <body>
  <h1>Web News</h1>
+ 
+<div id="device-info">device info...</div>
+<div id="debug-info">debug info...</div>
  </body>
 </html>
