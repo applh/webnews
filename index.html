@@ -12,6 +12,18 @@
    <script type="text/javascript" charset="utf-8">
 var WN={};
 
+WN.init_jquery=function() {
+   WN.debug("JQUERY start");
+
+   WN.debug=function(msg) {
+      WN.debug_step++;
+      jQuery("#debug-info").append('<div>'+WN.debug_step+'. '+msg+'</div>');
+   };
+
+   WN.debug("JQUERY end");
+};
+jQuery(WN.init_jquery);
+
 WN.init_phonegap=function() {
  
    WN.debug("DEVICE READY");
@@ -108,6 +120,7 @@ WN.debug=function(msg) {
   var element = document.getElementById('debug-info');
   element.innerHTML+='<div>'+WN.debug_step+'. '+msg+'</div>';
 };
+
 
 // Wait for Cordova to load
 document.addEventListener("deviceready", WN.init_phonegap, false);
