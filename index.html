@@ -52,39 +52,78 @@ WN.init_jquery=function() {
 
 WN.act_search=function () {
    WN.app_active=jQuery.trim(jQuery("#app-search").val());
-   WN.debug("Loading... " + WN.app_active);
+   // load home page
    window.location.replace("#home");
+   // load app
+   WN.init_app();
 };
 
-jQuery(WN.init_jquery);
 
-
+WN.phonegap_ok=false;
 WN.init_phonegap=function() {
- 
-   WN.debug("DEVICE READY");
-
-   WN.debug("DEVICE INFO");
-   var element = document.getElementById('device-info');
-   element.innerHTML = 'Device Name: '     + device.name     + '<br />' + 
-                            'Device Cordova: '  + device.cordova + '<br />' + 
-                            'Device Platform: ' + device.platform + '<br />' + 
-                            'Device UUID: '     + device.uuid     + '<br />' + 
-                            'Device Version: '  + device.version  + '<br />';
-
-   WN.debug("FILE SYSTEM");
+   WN.debug("device ready");
+   WN.debug("file system checking...");
+   // FILE SYSTEM NEEDED TO STORE DATA
    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, WN.init_FS_ready, WN.init_FS_fail);
-   
-   // TIMER TEST
-   window.setInterval(function(){var d = new Date();WN.debug("TIMER INTERVAL TEST..."+ d.toUTCString());}, 60000);
-   window.setTimeout(function(){var d = new Date();WN.debug("TIMER TIMEOUT TEST..."+ d.toUTCString());}, 5000);
-   window.setInterval(function(){WN.server_download();}, 5000);
+};
 
+WN.init_app=function() {
+ 
+   WN.debug("Loading... " + WN.app_active);
+   
+   WN.server_uri= '/app=' + WN.app_active + '/';
+
+   // TIMER TEST
+   //window.setInterval(function(){var d = new Date();WN.debug("TIMER INTERVAL TEST..."+ d.toUTCString());}, 60000);
+   //window.setTimeout(function(){var d = new Date();WN.debug("TIMER TIMEOUT TEST..."+ d.toUTCString());}, 5000);
+
+   // FIRST APP LOADING
+   WN.server_download();
+
+   // ACTIVATE WEB SERVICE
+   WN.web_service_on(10000);
+
+};
+
+WN.device_platform="";
+WN.device_uuid="";
+WN.get_device_info=function () {
+
+   if (!WN.phonegap_ok) {
+      WN.debug("phonegap not ready...");
+      return "";
+   }
+
+   WN.device_platform=device.platform;
+   WN.device_uuid=device.uuid;
+
+   var dihtml = 'Device Name: '     + device.name     + '<br />' + 
+                'Device Cordova: '  + device.cordova + '<br />' + 
+                'Device Platform: ' + device.platform + '<br />' + 
+                'Device UUID: '     + device.uuid     + '<br />' + 
+                'Device Version: '  + device.version  + '<br />';
+   WN.debug(dihtml);
+   return dihtml;
+};
+
+WN.geo_service_on=function () {
    // GEO LOCATION
-   // Get the most accurate position updates available on the
-   // device.
+   // Get the most accurate position updates available on the device.
    var geo_options = { enableHighAccuracy: true };
    WN.gap_geoid = navigator.geolocation.watchPosition(WN.geo_ok, WN.geo_error, geo_options);
+};
 
+WN.server_loop=null;
+WN.server_period=10000;
+WN.web_service_on=function (period) {
+   if (WN.server_loop != null) {
+      clearInterval(WN.server_loop);
+      WN.server_loop=null;
+   }
+   if (period > 1000) {
+      WN.server_period=period;
+      WN.server_loop=window.setInterval(function(){WN.server_download();}, WN.server_period);
+   }
 };
 
 
@@ -97,6 +136,10 @@ WN.init_FS_ready=function (fileSystem) {
    WN.gap_root=fileSystem.root;
    WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
    
+   WN.phonegap_ok=true;
+   // read device info
+   WN.get_device_info();
+
    WN.debug("server download");
    WN.file_cache=fileSystem.root.fullPath+"/"+WN.bname_cache;
    WN.server_download();   
@@ -111,6 +154,11 @@ WN.init_FS_start=function (writer) {
 };
 
 WN.server_download=function() {
+   if (!WN.phonegap_ok) {
+      WN.debug("phonegap not ready...");
+      return;
+   }
+
    // !! Assumes filePath is a valid path on the device
    filePath=WN.file_cache;
    var fileTransfer = new FileTransfer();
@@ -186,15 +234,18 @@ WN.geo_ok=function (position) {
                  +'/time='+position.timestamp
                  +'/';
 };
+
 WN.geo_error=function (error) {
    var msg='code: '+ error.code+ ', message: ' + error.message;
    WN.debug(msg);         
 };
 
 
-
 // Wait for Cordova to load
 document.addEventListener("deviceready", WN.init_phonegap, false);
+// Wait for jQuery to load
+jQuery(WN.init_jquery);
+
 
    </script>
  </head>
