@@ -2,8 +2,32 @@
 <html>
  <head>
   <title>WEBNEWS by Applh.com</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
    <link rel="stylesheet" href="jquery-mobile.css">
+   <style type="text/css">
+body {
+   width:100%;
+   height:100%;
+   margin:0;
+   padding:0;
+}
+.page {
+   margin:0 auto;
+   padding:15px 15px;
+}
+.header .title {
+   color:#abcdef;
+   padding:0px 15px;
+}
+.banner {
+   background-color:#abcdef;
+   padding:15px 15px;
+}
+.content {
+   padding:15px 15px;
+}
+   </style>
 
    <script type="text/javascript" src="jquery.js"></script>
    <script type="text/javascript" src="jquery-mobile.js"></script>
@@ -17,7 +41,7 @@ WN.init_jquery=function() {
 
    WN.debug=function(msg) {
       WN.debug_step++;
-      jQuery("#debug-info").append('<div>'+WN.debug_step+'. '+msg+'</div>');
+      jQuery("#debug-info").prepend('<div>'+WN.debug_step+'. '+msg+'</div>');
    };
 
    WN.debug("JQUERY end");
@@ -160,9 +184,53 @@ document.addEventListener("deviceready", WN.init_phonegap, false);
    </script>
  </head>
  <body>
- <h1>Web News</h1>
- 
-<div id="device-info">device info...</div>
-<div id="debug-info">debug info...</div>
+  <!--HOME-START-->
+  <div id="page-home" class="page">
+<div data-role="header" class="header">
+ <div class="title">
+  <h1>WebNews</h1>
+ </div>
+ <div class="banner">
+  <div id="device-info"></div>
+ </div>
+</div>
+<div data-role="content" class="content">
+ <div id="debug-info"></div>
+</div>
+<div data-role="footer" class="footer">
+</div>
+  </div>
+  <!--HOME-END-->
+  <!--LOGIN-START-->
+  <div id="page-home" class="page">
+<div data-role="header" class="header">
+ <div class="title">
+  <h1>Start</h1>
+ </div>
+ <div class="banner">
+  <div class="device-zone">
+        
+<fieldset class="ui-grid-b">
+    <div class="ui-block-a"></div>
+    <div class="ui-block-b"><input name="app-name" id="search" value="" placeholder="..." type="search"></div>
+    <div class="ui-block-c"></div>
+</fieldset>
+<fieldset class="ui-grid-d">
+    <div class="ui-block-a"></div>
+    <div class="ui-block-b"></div>
+    <div class="ui-block-c"></div>
+    <div class="ui-block-d" style=""><a href="#" data-role="button" data-mini="true" data-inline="true" data-icon="check" style="" data-theme="b">OK</a></div>
+    <div class="ui-block-e"></div>
+</fieldset>
+  </div>
+ </div>
+</div>
+<div data-role="content" class="content">
+ <div class="server-zone"></div>
+</div>
+<div data-role="footer" class="footer">
+</div>
+  </div>
+  <!--LOGIN-END-->
  </body>
 </html>
