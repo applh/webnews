@@ -2,11 +2,11 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.applh.webnews"
-        version   = "0.2">
+        version   = "0.3">
     <name>WebNews</name>
 
     <description>
-WebNews links to a website and provide offline features.
+WebNews links to a webserver and provide online/offline features.
     </description>
 
     <author href="http://Applh.com" email="ipad@applh.com">

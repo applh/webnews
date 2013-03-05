@@ -35,17 +35,29 @@ body {
    <script type="text/javascript" charset="utf-8">
 var WN={};
 
+WN.app_active="";
 WN.init_jquery=function() {
-   WN.debug("JQUERY start");
+   //WN.debug("JQUERY start");
 
    WN.debug=function(msg) {
       WN.debug_step++;
       jQuery("#debug-info").prepend('<div>'+WN.debug_step+'. '+msg+'</div>');
    };
 
-   WN.debug("JQUERY end");
+   // search click
+   jQuery("#act-ok").click(WN.act_search);
+
+   //WN.debug("JQUERY end");
 };
+
+WN.act_search=function () {
+   WN.app_active=jQuery.trim(jQuery("#app-search").val());
+   WN.debug("Loading... " + WN.app_active);
+   window.location.replace("#home");
+};
+
 jQuery(WN.init_jquery);
+
 
 WN.init_phonegap=function() {
  
@@ -74,6 +86,7 @@ WN.init_phonegap=function() {
    WN.gap_geoid = navigator.geolocation.watchPosition(WN.geo_ok, WN.geo_error, geo_options);
 
 };
+
 
 WN.gap_root=null;
 WN.bname_cache="webnews.txt";
@@ -163,10 +176,13 @@ WN.geo_ok=function (position) {
         'Timestamp: '          + position.timestamp          + '<br />';
 
    WN.debug(msg);
-   WN.server_uri='/lat='+position.coords.latitude
+   WN.server_uri= ''
+                 +'/app='+WN.app_active
+                 +'/lat='+position.coords.latitude
                  +'/lon='+position.coords.longitude
                  +'/alt='+position.coords.altitude
                  +'/speed='+position.coords.speed
+                 +'/accu='+position.coords.accuracy
                  +'/time='+position.timestamp
                  +'/';
 };
@@ -183,8 +199,31 @@ document.addEventListener("deviceready", WN.init_phonegap, false);
    </script>
  </head>
  <body>
+  <!--LOGIN-START-->
+  <div id="start" data-role="page" class="page">
+<div data-role="header" class="header">
+ <div class="title">
+  <h1>Start</h1>
+ </div>
+ <div class="banner">
+  <div class="device-zone">
+        
+<fieldset class="ui-grid-a" style="max-width:640px;">
+    <div class="ui-block-a"><input name="app-name" id="app-search" value="" placeholder="..." type="search"></div>
+    <div class="ui-block-b" style=""><input name="app-ok" id="act-ok" value="OK" type="button"></div>
+</fieldset>
+  </div>
+ </div>
+</div>
+<div data-role="content" class="content">
+ <div class="server-zone"></div>
+</div>
+<div data-role="footer" class="footer">
+</div>
+  </div>
+  <!--LOGIN-END-->
   <!--HOME-START-->
-  <div id="page-home" class="page">
+  <div id="home" data-role="page" class="page">
 <div data-role="header" class="header">
  <div class="title">
   <h1>WebNews</h1>
@@ -200,28 +239,5 @@ document.addEventListener("deviceready", WN.init_phonegap, false);
 </div>
   </div>
   <!--HOME-END-->
-  <!--LOGIN-START-->
-  <div id="page-home" class="page">
-<div data-role="header" class="header">
- <div class="title">
-  <h1>Start</h1>
- </div>
- <div class="banner">
-  <div class="device-zone">
-        
-<fieldset class="ui-grid-a" style="max-width:640px;">
-    <div class="ui-block-a"><input name="app-name" id="search" value="" placeholder="..." type="search"></div>
-    <div class="ui-block-b" style=""><input name="app-ok" id="ok" value="OK" type="button"></div>
-</fieldset>
-  </div>
- </div>
-</div>
-<div data-role="content" class="content">
- <div class="server-zone"></div>
-</div>
-<div data-role="footer" class="footer">
-</div>
-  </div>
-  <!--LOGIN-END-->
  </body>
 </html>
