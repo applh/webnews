@@ -106,11 +106,25 @@ WN.get_device_info=function () {
    return dihtml;
 };
 
+WN.gap_geoid=null;
 WN.geo_service_on=function () {
+   if (!WN.phonegap_ok) {
+      WN.debug("phonegap not ready...");
+      return;
+   }
+
    // GEO LOCATION
    // Get the most accurate position updates available on the device.
    var geo_options = { enableHighAccuracy: true };
-   WN.gap_geoid = navigator.geolocation.watchPosition(WN.geo_ok, WN.geo_error, geo_options);
+   if (WN.gap_geoid == null) {
+      WN.gap_geoid = navigator.geolocation.watchPosition(WN.geo_ok, WN.geo_error, geo_options);
+   }
+};
+WN.geo_service_off=function () {
+   if (WN.gap_geoid != null) {
+      navigator.geolocation.clearWatch(WN.gap_geoid);
+      WN.gap_geoid = null;
+   }
 };
 
 WN.server_loop=null;
@@ -258,7 +272,6 @@ jQuery(WN.init_jquery);
  </div>
  <div class="banner">
   <div class="device-zone">
-        
 <fieldset class="ui-grid-a" style="max-width:640px;">
     <div class="ui-block-a"><input name="app-name" id="app-search" value="" placeholder="..." type="search"></div>
     <div class="ui-block-b" style=""><input name="app-ok" id="act-ok" value="OK" type="button"></div>
