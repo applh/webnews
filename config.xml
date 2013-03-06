@@ -30,6 +30,8 @@ WebNews links to a webserver and provide online/offline features.
     <preference name="exit-on-suspend"  value="true" />
 
     <icon src="icon.png" />
-    <icon src="icon-57.png"            gap:platform="ios"        width="57" height="57" />
-    <icon src="icon-72.png"            gap:platform="ios"        width="72" height="72" />
+    <icon src="icon57.png"            gap:platform="ios"        width="57" height="57" />
+    <icon src="icon72.png"            gap:platform="ios"        width="72" height="72" />
+
+    <gap:splash src="splash.png" />
 </widget>
