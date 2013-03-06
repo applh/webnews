@@ -35,6 +35,7 @@ WebNews links to a webserver and provide online/offline features.
     <icon src="icon.png" />
     <icon src="icon57.png"            gap:platform="ios"        width="57" height="57" />
     <icon src="icon72.png"            gap:platform="ios"        width="72" height="72" />
+    <icon src="icon114.png"           gap:platform="ios"        width="114" height="114" />
 
     <gap:splash src="splash.png" />
 </widget>
