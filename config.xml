@@ -2,10 +2,13 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.applh.webnews"
-        version   = "0.4">
+        version   = "0.5">
     <name>WebNews</name>
 
     <description>
+WebNews is the next Google!
+Use the web as simply as you wish it to be.
+
 WebNews links to a webserver and provide online/offline features.
     </description>
 
