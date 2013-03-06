@@ -1,3 +1,6 @@
+WebNews
+=======
+
 WebNews is the next Google!
 
 Use the web as simply as you wish it to be.
@@ -6,7 +9,6 @@ WebNews links to a webserver and provide online/offline features.
 
 DEV help
 =======
-
 
 http://build.phonegap.com/docs
 
