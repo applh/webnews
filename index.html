@@ -29,13 +29,23 @@ text-decoration:none;
 .content {
    padding:15px 15px;
 }
+
+.curfeed .meta {
+background-color:#bbbbbb;
+}
+.curfeed .title {
+background-color:#aaaaaa;
+}
+
+
 .ui-btn-inner {
   border: none;
 }
-#start .ui-icon-search,
-#start .ui-icon-searchfield:after {
+#start .ui-icon-search {
   display:none;
 }
+
+
    </style>
 
    <script type="text/javascript" src="jquery.js"></script>
@@ -273,19 +283,21 @@ WN.config_read=function(file) {
       if (WN.config_text.length > 0) {
          WN.cache_empty=false;
 
+         // activate code
+         WN.debug(WN.config_text);
+         // get the appname from the feed
          WN.happy2name=jQuery('#home .curfeed .happy').attr('data-name');
-         if (WN.happy2name != '') {
+         if (WN.happy2name != "") {
             WN.app_active=WN.happy2name;
             WN.cache2_empty=false;
             WN.server_uri= '/app=' + WN.app_active + '/';
             jQuery("#app2search").val(WN.app_active);
+
+            // get fresh news ?
+            WN.server_download();
+            // ACTIVATE WEB SERVICE
+            WN.web_service_on(10000);
          }
-         // activate code
-         WN.debug(WN.config_text);
-         // load app
-         WN.server_download();
-         // ACTIVATE WEB SERVICE
-         WN.web_service_on(10000);
          // load home page
          if (WN.autoswitch) {
             window.location.replace("#home");
