@@ -256,21 +256,9 @@ WN.config_read2=function(file) {
          WN.server_uri= '/app=' + WN.app_active + '/';
       }
       
-      if (WN.cache2_empty) {
-         WN.server_download();
-      }
-      else {
-         // load home page
-         window.location.replace("#home");
-         // load app
-         WN.server_download();
-         // ACTIVATE WEB SERVICE
-         WN.web_service_on(10000);
-
-         jQuery("#app2search").val(WN.app_active);
-      }
-   };
+  };
 };
+WN.happy2name='';
 WN.config_read=function(file) {
    //WN.debug("CONFIG... file reader");
 
@@ -280,6 +268,23 @@ WN.config_read=function(file) {
       WN.config_text=evt.target.result;
       if (WN.config_text.length > 0) {
          WN.cache_empty=false;
+
+         // load home page
+         window.location.replace("#home");
+         // load app
+         WN.server_download();
+         // ACTIVATE WEB SERVICE
+         WN.web_service_on(10000);
+
+         WN.happy2name=jQUery('.happy').attr('data-name');
+         if (WN.happy2name != '') {
+            WN.app_active=WN.happy2name;
+            WN.cache2_empty=false;
+            WN.server_uri= '/app=' + WN.app_active + '/';
+            jQuery("#app2search").val(WN.app_active);
+         }
+
+ 
       }
       // activate code
       WN.debug(WN.config_text);
