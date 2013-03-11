@@ -60,7 +60,7 @@ WN.init_jquery=function() {
 };
 
 WN.act_search=function () {
-   WN.app_active=jQuery.trim(jQuery("#app-search").val());
+   WN.app_active=jQuery.trim(jQuery("#app2search").val());
    WN.debug("search..."+WN.app_active);
    // load home page
    window.location.replace("#home");
@@ -242,17 +242,19 @@ WN.config_prepare=function(fileEntry) {
 };
 WN.cache_empty=true;
 WN.cache2_empty=true;
+WN.config_text='';
+WN.config_text2='';
 WN.config_read2=function(file) {
    var reader = new FileReader();
    reader.onloadend = function (evt) {
       //WN.debug("CONFIG... read as text");
       WN.config_text2=evt.target.result;
+      WN.debug(WN.config_text2);
       if (WN.config_text2.length > 0) {
          WN.cache2_empty=false;
          WN.app_active=WN.config_text2;
-         jQuery("#app-search").val(WN.app_active);
+         WN.server_uri= '/app=' + WN.app_active + '/';
       }
-      WN.debug(WN.config_text2);
       
       if (WN.cache2_empty) {
          WN.server_download();
@@ -262,10 +264,10 @@ WN.config_read2=function(file) {
          window.location.replace("#home");
          // load app
          WN.server_download();
-
          // ACTIVATE WEB SERVICE
          WN.web_service_on(10000);
 
+         jQuery("#app2search").val(WN.app_active);
       }
    };
 };
@@ -279,6 +281,7 @@ WN.config_read=function(file) {
       if (WN.config_text.length > 0) {
          WN.cache_empty=false;
       }
+      // activate code
       WN.debug(WN.config_text);
    };
    reader.readAsText(file);
@@ -347,7 +350,7 @@ jQuery(WN.init_jquery);
    <tbody>
     <tr>
     <td>
-<input name="app-name" id="app-search" value="" placeholder="..." type="search" style="">
+<input name="app-name" id="app2search" value="" placeholder="..." type="search" style="">
     </td>
     <td>
 <input name="app-ok" id="act-ok" data-icon="arrow-r" data-iconpos="left" value="OK" type="submit" data-inline="true" style="height:30px;">
