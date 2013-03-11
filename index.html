@@ -159,41 +159,26 @@ WN.bname_cache2="webnews2.txt";
 WN.server_url="http://webnews.applh.com";
 WN.server_uri="/";
 WN.init_FS_ready=function (fileSystem) {
-   WN.debug("file webnews.txt");
+   WN.debug("filesystem ready...");
+   WN.network = navigator.network.connection.type;
+
    WN.gap_root=fileSystem.root;
-   // read the cache file
+   WN.file_cache=fileSystem.root.fullPath+"/"+WN.bname_cache;
+
+   // read the cache files
    WN.file_config_load();
 
-   //WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
-   
    WN.phonegap_ok=true;
    // read device info
    WN.get_device_info();
 
-   WN.network = navigator.network.connection.type;
-
-   WN.debug("server download");
-   WN.file_cache=fileSystem.root.fullPath+"/"+WN.bname_cache;
-   if (WN.cache2_empty) {
-      WN.server_download();
-   }
-   else {
-      // load home page
-      window.location.replace("#home");
-      // load app
-      WN.server_download();
-
-      // ACTIVATE WEB SERVICE
-      WN.web_service_on(10000);
-
-   }
 };
 WN.init_FS_prepare=function (fileEntry) {
-   WN.debug("create writer");
+   //WN.debug("create writer");
    fileEntry.createWriter(WN.init_FS_start, WN.init_FS_fail);
 };
 WN.init_FS_start=function (writer) {
-   WN.debug("write into file");
+   WN.debug("record app..."WN.app_active+);
    //writer.write(WN.server_url+WN.server_uri);
    writer.write(WN.app_active);
 };
@@ -223,7 +208,7 @@ WN.server_download=function() {
     filePath,
     function(entry) {
         //WN.debug("download complete: " + entry.fullPath);
-        WN.file_config_load();        
+        WN.file_cache_load();        
     },
     function(error) {
         WN.debug("download error source " + error.source);
@@ -233,9 +218,15 @@ WN.server_download=function() {
    );
 };
 
+WN.file_cache_load=function () {
+   WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
+};
+
 WN.file_config_load=function () {
-   //WN.debug("LOAD CONFIG FILE");
+   WN.debug("LOAD... "+WN.bname_cache2);
    WN.gap_root.getFile(WN.bname_cache2, {create: true, exclusive: false}, WN.config_prepare2, WN.init_FS_fail);
+
+   WN.debug("LOAD... "+WN.bname_cache);
    WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
 };
 WN.config_prepare2=function(fileEntry) {
@@ -256,8 +247,23 @@ WN.config_read2=function(file) {
       if (WN.config_text2.length > 0) {
          WN.cache2_empty=false;
          WN.app_active=WN.config_text2;
+         jQuery("#app-search").val(WN.app_active);
       }
       WN.debug(WN.config_text2);
+      
+      if (WN.cache2_empty) {
+         WN.server_download();
+      }
+      else {
+         // load home page
+         window.location.replace("#home");
+         // load app
+         WN.server_download();
+
+         // ACTIVATE WEB SERVICE
+         WN.web_service_on(10000);
+
+      }
    };
 };
 WN.config_read=function(file) {
@@ -360,7 +366,7 @@ jQuery(WN.init_jquery);
   <div id="home" data-role="page" class="page">
 <div data-role="header" class="header">
  <div class="title">
-  <h1>WebNews</h1>
+  <h1><a href="#start">WebNews</a></h1>
  </div>
  <div class="banner">
   <div id="device-info"></div>

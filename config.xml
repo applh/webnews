@@ -31,6 +31,7 @@ WebNews links to a webserver and provide online/offline features.
     <preference name="fullscreen"       value="false" />
     <preference name="webviewbounce"    value="true" />    
     <preference name="exit-on-suspend"  value="false" />
+    <preference name="splash-screen-duration" value="0" />
 
     <icon src="icon.png" />
     <icon src="icon57.png"            gap:platform="ios"        width="57" height="57" />
