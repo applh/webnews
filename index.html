@@ -48,7 +48,9 @@ WN.init_jquery=function() {
 
    WN.debug=function(msg) {
       WN.debug_step++;
-      jQuery("#debug-info").prepend('<div>'+WN.debug_step+'. '+msg+'</div>');
+      var msg2='<div>'+WN.debug_step+'. '+msg+'</div>';
+      alert(msg2);
+      jQuery("#debug-info").prepend(msg2);
    };
 
    // search click
@@ -59,6 +61,7 @@ WN.init_jquery=function() {
 
 WN.act_search=function () {
    WN.app_active=jQuery.trim(jQuery("#app-search").val());
+   WN.debug("search..."+WN.app_active);
    // load home page
    window.location.replace("#home");
    // load app
