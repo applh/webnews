@@ -867,11 +867,11 @@ a.ui-link-inherit {
 }
 /* delete/close */
 .ui-icon-delete {
-	background-position: 	-72px 50%;
+	background-position: 	-64px 50%;
 }
 /* arrows */
 .ui-icon-arrow-r {
-	background-position: 	-108px 50%;
+	background-position: 	-100px 50%;
 }
 .ui-icon-arrow-l {
 	background-position: 	-144px 50%;
@@ -915,7 +915,7 @@ a.ui-link-inherit {
 }
 .ui-icon-search,
 .ui-icon-searchfield:after {
-	background-position: 	-612px 50%;
+	background-position: 	-604px 50%;
 }
 .ui-icon-checkbox-off {
 	background-position: 	-684px 50%;

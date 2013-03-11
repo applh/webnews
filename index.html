@@ -49,7 +49,7 @@ WN.init_jquery=function() {
    WN.debug=function(msg) {
       WN.debug_step++;
       var msg2='<div>'+WN.debug_step+'. '+msg+'</div>';
-      alert(msg2);
+      //alert(msg2);
       jQuery("#debug-info").prepend(msg2);
    };
 
@@ -339,7 +339,7 @@ jQuery(WN.init_jquery);
   <div id="start" data-role="page" class="page">
 <div data-role="header" class="header">
  <div class="title">
-  <h1>Start</h1>
+  <h1><a href="#home">Start</a></h1>
  </div>
  <div class="banner">
   <div class="device-zone">
