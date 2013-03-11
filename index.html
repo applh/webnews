@@ -300,7 +300,7 @@ WN.cache_read=function(file) {
 
    var reader = new FileReader();
    // install read post processing
-   reader.onloadend=MW.config_read_process;
+   reader.onloadend=WN.config_read_process;
    // run reader
    reader.readAsText(file);
 };
