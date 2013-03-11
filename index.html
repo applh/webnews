@@ -31,10 +31,12 @@ text-decoration:none;
 }
 
 .curfeed .meta {
-background-color:#bbbbbb;
+background-color:#cccccc;
+padding:10px;
 }
 .curfeed .title {
-background-color:#aaaaaa;
+background-color:#dddddd;
+padding:10px;
 }
 
 
@@ -113,7 +115,6 @@ WN.init_app=function() {
 };
 
 WN.record_app=function() {
-   WN.gap_root.getFile(WN.bname_cache2, {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
 };
 
 WN.device_platform="";
@@ -174,7 +175,6 @@ WN.web_service_on=function (period) {
 
 WN.gap_root=null;
 WN.bname_cache="webnews.txt";
-WN.bname_cache2="webnews2.txt";
 WN.server_url="http://webnews.applh.com";
 WN.server_uri="/";
 WN.init_FS_ready=function (fileSystem) {
@@ -254,7 +254,6 @@ WN.config_prepare=function(fileEntry) {
    fileEntry.file(WN.config_read, WN.init_FS_fail);
 };
 WN.cache_empty=true;
-WN.cache2_empty=true;
 WN.config_text='';
 WN.config_text2='';
 WN.autoswitch=true;
@@ -270,24 +269,24 @@ WN.config_read=function(file) {
       if (WN.config_text.length > 0) {
          WN.cache_empty=false;
 
+         // load home page
+         if (WN.autoswitch) {
+            window.location.replace("#home");
+            WN.autoswitch=false;
+         }
+
          // activate code
          WN.debug(WN.config_text);
          // get the appname from the feed
          WN.happy2name=jQuery('#home .curfeed .happy').attr('data-name');
          if (WN.happy2name != "") {
             WN.app_active=WN.happy2name;
-            WN.cache2_empty=false;
             WN.server_uri= '/app=' + WN.app_active + '/';
             jQuery("#app2search").val(WN.app_active);
 
             // get fresh news ?
             // ACTIVATE WEB SERVICE
-            WN.web_service_on(10000);
-         }
-         // load home page
-         if (WN.autoswitch) {
-            window.location.replace("#home");
-            WN.autoswitch=false;
+            WN.web_service_on(5000);
          }
  
       }
