@@ -2,7 +2,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.applh.webnews"
-        version   = "0.5">
+        version   = "0.6">
     <name>WebNews</name>
 
     <description>
@@ -30,7 +30,7 @@ WebNews links to a webserver and provide online/offline features.
     <preference name="target-device"    value="universal" />
     <preference name="fullscreen"       value="false" />
     <preference name="webviewbounce"    value="true" />    
-    <preference name="exit-on-suspend"  value="true" />
+    <preference name="exit-on-suspend"  value="false" />
 
     <icon src="icon.png" />
     <icon src="icon57.png"            gap:platform="ios"        width="57" height="57" />
