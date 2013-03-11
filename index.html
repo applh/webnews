@@ -32,7 +32,10 @@ text-decoration:none;
 .ui-btn-inner {
   border: none;
 }
-
+#start .ui-icon-search,
+#start .ui-icon-searchfield:after {
+  display:none;
+}
    </style>
 
    <script type="text/javascript" src="jquery.js"></script>
@@ -226,8 +229,8 @@ WN.file_cache_load=function () {
 };
 
 WN.file_config_load=function () {
-   WN.debug("LOAD... "+WN.bname_cache2);
-   WN.gap_root.getFile(WN.bname_cache2, {create: true, exclusive: false}, WN.config_prepare2, WN.init_FS_fail);
+   //WN.debug("LOAD... "+WN.bname_cache2);
+   //WN.gap_root.getFile(WN.bname_cache2, {create: true, exclusive: false}, WN.config_prepare2, WN.init_FS_fail);
 
    WN.debug("LOAD... "+WN.bname_cache);
    WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
@@ -258,6 +261,7 @@ WN.config_read2=function(file) {
       
   };
 };
+WN.autoswitch=true;
 WN.happy2name='';
 WN.config_read=function(file) {
    //WN.debug("CONFIG... file reader");
@@ -269,25 +273,26 @@ WN.config_read=function(file) {
       if (WN.config_text.length > 0) {
          WN.cache_empty=false;
 
-         // load home page
-         window.location.replace("#home");
-         // load app
-         WN.server_download();
-         // ACTIVATE WEB SERVICE
-         WN.web_service_on(10000);
-
-         WN.happy2name=jQUery('.happy').attr('data-name');
+         WN.happy2name=jQuery('#home .curfeed .happy').attr('data-name');
          if (WN.happy2name != '') {
             WN.app_active=WN.happy2name;
             WN.cache2_empty=false;
             WN.server_uri= '/app=' + WN.app_active + '/';
             jQuery("#app2search").val(WN.app_active);
          }
-
+         // activate code
+         WN.debug(WN.config_text);
+         // load app
+         WN.server_download();
+         // ACTIVATE WEB SERVICE
+         WN.web_service_on(10000);
+         // load home page
+         if (WN.autoswitch) {
+            window.location.replace("#home");
+            WN.autoswitch=false;
+         }
  
       }
-      // activate code
-      WN.debug(WN.config_text);
    };
    reader.readAsText(file);
 };
@@ -358,7 +363,7 @@ jQuery(WN.init_jquery);
 <input name="app-name" id="app2search" value="" placeholder="..." type="search" style="">
     </td>
     <td>
-<input name="app-ok" id="act-ok" data-icon="arrow-r" data-iconpos="left" value="OK" type="submit" data-inline="true" style="height:30px;">
+<input name="app-ok" id="act-ok" data-icon="arrow-r" data-iconpos="left" value="GO" type="submit" data-inline="true" style="height:30px;">
     </td>
       </tr>
    </tbody>
