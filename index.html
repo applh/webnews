@@ -31,12 +31,12 @@ text-decoration:none;
 }
 
 .curfeed .meta {
-background-color:#cccccc;
+background-color:#dddddd;
 padding:10px;
 }
 .curfeed .title {
-background-color:#dddddd;
-padding:10px;
+background-color:#eeeeee;
+padding:0px 10px;
 }
 
 
@@ -246,7 +246,7 @@ WN.cache_prepare=function(fileEntry) {
 };
 
 WN.file_config_load=function () {
-   WN.debug("LOAD... "+WN.bname_cache);
+   //WN.debug("LOAD... "+WN.bname_cache);
    WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
 };
 WN.config_prepare=function(fileEntry) {
@@ -263,7 +263,11 @@ WN.config_read=function(file) {
 
    var reader = new FileReader();
    // install read post processing
-   reader.onloadend = function (evt) {
+   reader.onloadend=WN.config_read_process; 
+   // run reader
+   reader.readAsText(file);
+};
+WN.config_read_process=function(evt) {
       //WN.debug("CONFIG... read as text");
       WN.config_text=evt.target.result;
       if (WN.config_text.length > 0) {
@@ -289,17 +293,18 @@ WN.config_read=function(file) {
             WN.web_service_on(5000);
          }
  
-      }
-   };
-   // run reader
-   reader.readAsText(file);
+      }   
 };
 WN.cache_read=function(file) {
    //WN.debug("CONFIG... file reader");
 
    var reader = new FileReader();
    // install read post processing
-   reader.onloadend = function (evt) {
+   reader.onloadend=MW.config_read_process;
+   // run reader
+   reader.readAsText(file);
+};
+WN.config_read_process=function(evt) {
       //WN.debug("CONFIG... read as text");
       WN.config_text=evt.target.result;
       if (WN.config_text.length > 0) {
@@ -307,9 +312,6 @@ WN.cache_read=function(file) {
          // activate code
          WN.debug(WN.config_text);
       }
-   };
-   // run reader
-   reader.readAsText(file);
 };
 
 
