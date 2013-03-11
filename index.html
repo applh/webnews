@@ -15,17 +15,24 @@ body {
 .page {
    margin:0 auto;
 }
+h1 a {
+text-decoration:none;
+}
 .header .title {
    color:#abcdef;
    padding:0px 15px;
 }
 .banner {
-   background-color:#abcdef;
+   background-color:#55aaff;
    padding:15px 15px;
 }
 .content {
    padding:15px 15px;
 }
+.ui-btn-inner {
+  border: none;
+}
+
    </style>
 
    <script type="text/javascript" src="jquery.js"></script>
@@ -72,6 +79,7 @@ WN.init_app=function() {
    WN.debug("Loading... " + WN.app_active);
    
    WN.server_uri= '/app=' + WN.app_active + '/';
+   WN.record_app();
 
    // TIMER TEST
    //window.setInterval(function(){var d = new Date();WN.debug("TIMER INTERVAL TEST..."+ d.toUTCString());}, 60000);
@@ -83,6 +91,10 @@ WN.init_app=function() {
    // ACTIVATE WEB SERVICE
    WN.web_service_on(10000);
 
+};
+
+WN.record_app=function() {
+   WN.gap_root.getFile(WN.bname_cache2, {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
 };
 
 WN.device_platform="";
@@ -143,20 +155,38 @@ WN.web_service_on=function (period) {
 
 WN.gap_root=null;
 WN.bname_cache="webnews.txt";
+WN.bname_cache2="webnews2.txt";
 WN.server_url="http://webnews.applh.com";
 WN.server_uri="/";
 WN.init_FS_ready=function (fileSystem) {
    WN.debug("file webnews.txt");
    WN.gap_root=fileSystem.root;
-   WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
+   // read the cache file
+   WN.file_config_load();
+
+   //WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.init_FS_prepare, WN.init_FS_fail);
    
    WN.phonegap_ok=true;
    // read device info
    WN.get_device_info();
 
+   WN.network = navigator.network.connection.type;
+
    WN.debug("server download");
    WN.file_cache=fileSystem.root.fullPath+"/"+WN.bname_cache;
-   WN.server_download();   
+   if (WN.cache2_empty) {
+      WN.server_download();
+   }
+   else {
+      // load home page
+      window.location.replace("#home");
+      // load app
+      WN.server_download();
+
+      // ACTIVATE WEB SERVICE
+      WN.web_service_on(10000);
+
+   }
 };
 WN.init_FS_prepare=function (fileEntry) {
    WN.debug("create writer");
@@ -164,10 +194,20 @@ WN.init_FS_prepare=function (fileEntry) {
 };
 WN.init_FS_start=function (writer) {
    WN.debug("write into file");
-   writer.write(WN.server_url+WN.server_uri);
+   //writer.write(WN.server_url+WN.server_uri);
+   writer.write(WN.app_active);
 };
 
 WN.server_download=function() {
+   WN.network = navigator.network.connection.type;
+   if (WN.network == Connection.NONE) {
+      WN.debug("No Connection...");
+      return;
+   }
+   if (WN.network == Connection.UNKNOWN) {
+      WN.debug("Unknown Connection...");
+      return;
+   }
    if (!WN.phonegap_ok) {
       WN.debug("phonegap not ready...");
       return;
@@ -195,11 +235,30 @@ WN.server_download=function() {
 
 WN.file_config_load=function () {
    //WN.debug("LOAD CONFIG FILE");
+   WN.gap_root.getFile(WN.bname_cache2, {create: true, exclusive: false}, WN.config_prepare2, WN.init_FS_fail);
    WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
+};
+WN.config_prepare2=function(fileEntry) {
+   //WN.debug("CONFIG... file entry");
+   fileEntry.file(WN.config_read2, WN.init_FS_fail);
 };
 WN.config_prepare=function(fileEntry) {
    //WN.debug("CONFIG... file entry");
    fileEntry.file(WN.config_read, WN.init_FS_fail);
+};
+WN.cache_empty=true;
+WN.cache2_empty=true;
+WN.config_read2=function(file) {
+   var reader = new FileReader();
+   reader.onloadend = function (evt) {
+      //WN.debug("CONFIG... read as text");
+      WN.config_text2=evt.target.result;
+      if (WN.config_text2.length > 0) {
+         WN.cache2_empty=false;
+         WN.app_active=WN.config_text2;
+      }
+      WN.debug(WN.config_text2);
+   };
 };
 WN.config_read=function(file) {
    //WN.debug("CONFIG... file reader");
@@ -208,6 +267,9 @@ WN.config_read=function(file) {
    reader.onloadend = function (evt) {
       //WN.debug("CONFIG... read as text");
       WN.config_text=evt.target.result;
+      if (WN.config_text.length > 0) {
+         WN.cache_empty=false;
+      }
       WN.debug(WN.config_text);
    };
    reader.readAsText(file);
@@ -272,11 +334,19 @@ jQuery(WN.init_jquery);
  </div>
  <div class="banner">
   <div class="device-zone">
-<fieldset class="ui-grid-a" style="max-width:640px;">
-    <div class="ui-block-a"><input name="app-name" id="app-search" value="" placeholder="..." type="search"></div>
-    <div class="ui-block-b" style=""><input name="app-ok" id="act-ok" value="OK" type="button"></div>
-</fieldset>
-  </div>
+  <table style="width:80%;">
+   <tbody>
+    <tr>
+    <td>
+<input name="app-name" id="app-search" value="" placeholder="..." type="search" style="">
+    </td>
+    <td>
+<input name="app-ok" id="act-ok" data-icon="arrow-r" data-iconpos="left" value="OK" type="submit" data-inline="true" style="height:30px;">
+    </td>
+      </tr>
+   </tbody>
+  </table>
+ </div>
  </div>
 </div>
 <div data-role="content" class="content">
