@@ -41,8 +41,9 @@ background-color:#aaaaaa;
 .ui-btn-inner {
   border: none;
 }
-#start .ui-icon-search {
-  background:none;
+#start .ui-icon-search, 
+.ui-icon-searchfield:after {
+  display:none;
 }
 
 
@@ -237,19 +238,16 @@ WN.server_download=function() {
 };
 
 WN.file_cache_load=function () {
-   WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
+   WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.cache_prepare, WN.init_FS_fail);
+};
+WN.cache_prepare=function(fileEntry) {
+   //WN.debug("CONFIG... file entry");
+   fileEntry.file(WN.cache_read, WN.init_FS_fail);
 };
 
 WN.file_config_load=function () {
-   //WN.debug("LOAD... "+WN.bname_cache2);
-   //WN.gap_root.getFile(WN.bname_cache2, {create: true, exclusive: false}, WN.config_prepare2, WN.init_FS_fail);
-
    WN.debug("LOAD... "+WN.bname_cache);
    WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
-};
-WN.config_prepare2=function(fileEntry) {
-   //WN.debug("CONFIG... file entry");
-   fileEntry.file(WN.config_read2, WN.init_FS_fail);
 };
 WN.config_prepare=function(fileEntry) {
    //WN.debug("CONFIG... file entry");
@@ -259,26 +257,13 @@ WN.cache_empty=true;
 WN.cache2_empty=true;
 WN.config_text='';
 WN.config_text2='';
-WN.config_read2=function(file) {
-   var reader = new FileReader();
-   reader.onloadend = function (evt) {
-      //WN.debug("CONFIG... read as text");
-      WN.config_text2=evt.target.result;
-      WN.debug(WN.config_text2);
-      if (WN.config_text2.length > 0) {
-         WN.cache2_empty=false;
-         WN.app_active=WN.config_text2;
-         WN.server_uri= '/app=' + WN.app_active + '/';
-      }
-      
-  };
-};
 WN.autoswitch=true;
 WN.happy2name='';
 WN.config_read=function(file) {
    //WN.debug("CONFIG... file reader");
 
    var reader = new FileReader();
+   // install read post processing
    reader.onloadend = function (evt) {
       //WN.debug("CONFIG... read as text");
       WN.config_text=evt.target.result;
@@ -296,7 +281,6 @@ WN.config_read=function(file) {
             jQuery("#app2search").val(WN.app_active);
 
             // get fresh news ?
-            WN.server_download();
             // ACTIVATE WEB SERVICE
             WN.web_service_on(10000);
          }
@@ -308,8 +292,27 @@ WN.config_read=function(file) {
  
       }
    };
+   // run reader
    reader.readAsText(file);
 };
+WN.cache_read=function(file) {
+   //WN.debug("CONFIG... file reader");
+
+   var reader = new FileReader();
+   // install read post processing
+   reader.onloadend = function (evt) {
+      //WN.debug("CONFIG... read as text");
+      WN.config_text=evt.target.result;
+      if (WN.config_text.length > 0) {
+         WN.cache_empty=false;
+         // activate code
+         WN.debug(WN.config_text);
+      }
+   };
+   // run reader
+   reader.readAsText(file);
+};
+
 
 WN.init_FS_fail=function (evt) {
    WN.debug(evt.target.error.code);
@@ -377,7 +380,7 @@ jQuery(WN.init_jquery);
 <input name="app-name" id="app2search" value="" placeholder="..." type="search" style="">
     </td>
     <td>
-<input name="app-ok" id="act-ok" data-icon="arrow-r" data-iconpos="left" value="GO" type="submit" data-inline="true" style="height:30px;">
+<input name="app-ok" id="act-ok" data-icon="arrow-r" data-iconpos="left" value="OK" type="submit" data-inline="true" style="height:30px;">
     </td>
       </tr>
    </tbody>
