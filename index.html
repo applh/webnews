@@ -42,7 +42,7 @@ background-color:#aaaaaa;
   border: none;
 }
 #start .ui-icon-search {
-  display:none;
+  background:none;
 }
 
 
@@ -74,11 +74,13 @@ WN.init_jquery=function() {
 
 WN.act_search=function () {
    WN.app_active=jQuery.trim(jQuery("#app2search").val());
-   WN.debug("search..."+WN.app_active);
-   // load home page
-   window.location.replace("#home");
-   // load app
-   WN.init_app();
+   if (WN.app_active) {
+      WN.debug("search..."+WN.app_active);
+      // load home page
+      window.location.replace("#home");
+      // load app
+      WN.init_app();
+   }
 };
 
 
