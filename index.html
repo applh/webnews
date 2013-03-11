@@ -181,7 +181,7 @@ WN.init_FS_prepare=function (fileEntry) {
    fileEntry.createWriter(WN.init_FS_start, WN.init_FS_fail);
 };
 WN.init_FS_start=function (writer) {
-   WN.debug("record app..."WN.app_active+);
+   WN.debug("record app..."+WN.app_active);
    //writer.write(WN.server_url+WN.server_uri);
    writer.write(WN.app_active);
 };
