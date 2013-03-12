@@ -35,7 +35,7 @@ WebNews links to a webserver and provide online/offline features.
     <preference name="splash-screen-duration" value="500" />
     <preference name="fullscreen"       value="false" />
     <preference name="webviewbounce"    value="true" />    
-    <preference name="exit-on-suspend"  value="yes" />
+    <preference name="exit-on-suspend"  value="true" />
     <preference name="stay-in-webview" value="false" />
     <preference name="android-installLocation" value="auto" />
 
