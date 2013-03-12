@@ -317,9 +317,13 @@ WN.config_read_process=function(evt) {
          WN.cache_empty=false;
          // activate code
          WN.debug(WN.config_text);
+         // protect webview against links flood
+         WN.feed_post_process();
       }
 };
-
+WN.feed_post_process=function() {
+   jQuery(".curfeed .content a").attr("target", "_blank");
+};
 
 WN.init_FS_fail=function (evt) {
    WN.debug(evt.target.error.code);
