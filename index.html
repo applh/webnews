@@ -108,10 +108,6 @@ WN.init_app=function() {
    WN.server_uri= '/app=' + WN.app_active + '/';
    WN.record_app();
 
-   // TIMER TEST
-   //window.setInterval(function(){var d = new Date();WN.debug("TIMER INTERVAL TEST..."+ d.toUTCString());}, 60000);
-   //window.setTimeout(function(){var d = new Date();WN.debug("TIMER TIMEOUT TEST..."+ d.toUTCString());}, 5000);
-
    // FIRST APP LOADING
    WN.server_download();
 
@@ -140,7 +136,7 @@ WN.get_device_info=function () {
                 'Device Platform: ' + device.platform + '<br />' + 
                 'Device UUID: '     + device.uuid     + '<br />' + 
                 'Device Version: '  + device.version  + '<br />';
-   WN.debug(dihtml);
+   //WN.debug(dihtml);
    return dihtml;
 };
 
@@ -279,17 +275,14 @@ WN.config_read_process=function(evt) {
       if (WN.config_text.length > 0) {
          WN.cache_empty=false;
 
-         // load home page
-         if (WN.autoswitch) {
-            window.location.replace("#home");
-            WN.autoswitch=false;
-         }
-
          // activate code
          WN.debug(WN.config_text);
+         // protect webview against links flood
+         WN.feed_post_process();
+
          // get the appname from the feed
          WN.happy2name=jQuery('#home .curfeed .happy').attr('data-name');
-         if (WN.happy2name != "") {
+         if (WN.happy2name) {
             WN.app_active=WN.happy2name;
             WN.server_uri= '/app=' + WN.app_active + '/';
             jQuery("#app2search").val(WN.app_active);
@@ -298,7 +291,12 @@ WN.config_read_process=function(evt) {
             // ACTIVATE WEB SERVICE
             WN.web_service_on(5000);
          }
- 
+
+         // load home page
+         if (WN.autoswitch) {
+            window.location.replace("#home");
+            WN.autoswitch=false;
+         }
       }   
 };
 WN.cache_read=function(file) {
