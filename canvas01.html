@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>WEBNEWS by Applh.com - version 1.1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+   <link rel="stylesheet" href="jquery-mobile.css">
+   <style type="text/css">
+/*
+ANDROID COLORS
+= BLUE =
+33b5e5
+0099cc
+= VIOLET =
+aa66cc
+9933cc
+= GREEN =
+99cc00
+669900
+= ORANGE = 
+ffbb33
+ff8800
+= RED =
+ff4444
+cc0000
+
+*/
+
+body {
+   width:100%;
+   height:100%;
+   margin:0;
+   padding:0;
+}
+.page {
+   margin:0 auto;
+}
+h1 a {
+text-decoration:none;
+}
+.header .title {
+   padding:0px 15px;
+}
+.banner {
+   background-color:#33b5e5;
+   padding:15px 15px;
+}
+.content {
+   padding:15px 15px;
+}
+
+.curfeed a {
+text-decoration:none;
+}
+.curfeed .meta {
+background-color:#e6e6e6;
+padding:5px 10px;
+}
+.curfeed .title {
+background-color:#eeeeee;
+padding:5px 10px;
+}
+.curfeed .content img {
+margin:5px 10px;
+}
+
+
+.ui-btn-inner {
+  border: none;
+}
+#start .ui-icon-search, 
+.ui-icon-searchfield:after {
+  display:none;
+}
+
+#start .title h1 a {
+color:#33b5e5;
+}
+
+#start .title h1 {
+margin-top:10px;
+margin-bottom:-10px;
+}
+
+#start.ui-body-c, .ui-overlay-c {
+  background: linear-gradient(#eeeeee, #000000) repeat scroll 0 0 #F9F9F9;
+}
+   </style>
+
+   <script type="text/javascript" src="jquery.js"></script>
+   <script type="text/javascript" src="jquery-mobile.js"></script>
+
+   <script src="phonegap.js"></script>
+   <script src="childbrowser.js"></script>
+
+   <script type="text/javascript" charset="utf-8">
+var WN={};
+
+WN.app_active="";
+WN.init_jquery=function() {
+   //WN.debug("JQUERY start");
+
+   WN.debug=function(msg) {
+      WN.debug_step++;
+      var msg2='<div>'+WN.debug_step+'. '+msg+'</div>';
+      //alert(msg2);
+      jQuery("#debug-info").prepend(msg2);
+   };
+
+   // search click
+   jQuery("#act-ok").click(WN.act_search);
+
+   //WN.debug("JQUERY end");
+};
+
+WN.act_search=function () {
+   WN.app_active=jQuery.trim(jQuery("#app2search").val());
+   if (WN.app_active) {
+      WN.debug("search..."+WN.app_active);
+      // load home page
+      window.location.replace("#home");
+      // load app
+      WN.init_app();
+   }
+};
+
+
+WN.phonegap_ok=false;
+WN.init_phonegap=function() {
+   WN.debug("device ready");
+   WN.debug("file system checking...");
+   // FILE SYSTEM NEEDED TO STORE DATA
+   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, WN.init_FS_ready, WN.init_FS_fail);
+};
+
+WN.init_app=function() {
+ 
+   WN.debug("Loading... " + WN.app_active);
+   
+   WN.server_uri= '/app=' + WN.app_active + '/';
+   WN.record_app();
+
+   // FIRST APP LOADING
+   WN.server_download();
+
+   // ACTIVATE WEB SERVICE
+   WN.web_service_on(10000);
+
+};
+
+WN.record_app=function() {
+};
+
+WN.device_platform="";
+WN.device_uuid="";
+WN.get_device_info=function () {
+
+   if (!WN.phonegap_ok) {
+      WN.debug("phonegap not ready...");
+      return "";
+   }
+
+   WN.device_platform=device.platform;
+   WN.device_uuid=device.uuid;
+
+   var dihtml = 'Device Name: '     + device.name     + '<br />' + 
+                'Device Cordova: '  + device.cordova + '<br />' + 
+                'Device Platform: ' + device.platform + '<br />' + 
+                'Device UUID: '     + device.uuid     + '<br />' + 
+                'Device Version: '  + device.version  + '<br />';
+   //WN.debug(dihtml);
+   return dihtml;
+};
+
+WN.gap_geoid=null;
+WN.geo_service_on=function () {
+   if (!WN.phonegap_ok) {
+      WN.debug("phonegap not ready...");
+      return;
+   }
+
+   // GEO LOCATION
+   // Get the most accurate position updates available on the device.
+   var geo_options = { enableHighAccuracy: true };
+   if (WN.gap_geoid == null) {
+      WN.gap_geoid = navigator.geolocation.watchPosition(WN.geo_ok, WN.geo_error, geo_options);
+   }
+};
+WN.geo_service_off=function () {
+   if (WN.gap_geoid != null) {
+      navigator.geolocation.clearWatch(WN.gap_geoid);
+      WN.gap_geoid = null;
+   }
+};
+
+WN.server_loop=null;
+WN.server_period=10000;
+WN.web_service_on=function (period) {
+   if (WN.server_loop != null) {
+      clearInterval(WN.server_loop);
+      WN.server_loop=null;
+   }
+   if (period > 1000) {
+      WN.server_period=period;
+      WN.server_loop=window.setInterval(function(){WN.server_download();}, WN.server_period);
+   }
+};
+
+
+WN.gap_root=null;
+WN.bname_cache="webnews.txt";
+WN.server_url="http://webnews.applh.com";
+WN.server_uri="/";
+WN.init_FS_ready=function (fileSystem) {
+   WN.debug("filesystem ready...");
+   WN.network = navigator.network.connection.type;
+
+   WN.gap_root=fileSystem.root;
+   WN.file_cache=fileSystem.root.fullPath+"/"+WN.bname_cache;
+
+   // read the cache files
+   WN.file_config_load();
+
+   WN.phonegap_ok=true;
+   // read device info
+   WN.get_device_info();
+
+};
+WN.init_FS_prepare=function (fileEntry) {
+   //WN.debug("create writer");
+   fileEntry.createWriter(WN.init_FS_start, WN.init_FS_fail);
+};
+WN.init_FS_start=function (writer) {
+   WN.debug("record app..."+WN.app_active);
+   //writer.write(WN.server_url+WN.server_uri);
+   writer.write(WN.app_active);
+};
+
+WN.server_download=function() {
+   WN.network = navigator.network.connection.type;
+   if (WN.network == Connection.NONE) {
+      WN.debug("No Connection...");
+      return;
+   }
+   if (WN.network == Connection.UNKNOWN) {
+      WN.debug("Unknown Connection...");
+      return;
+   }
+   if (!WN.phonegap_ok) {
+      WN.debug("phonegap not ready...");
+      return;
+   }
+
+   // !! Assumes filePath is a valid path on the device
+   filePath=WN.file_cache;
+   var fileTransfer = new FileTransfer();
+   var uri = encodeURI(WN.server_url+WN.server_uri);
+
+   fileTransfer.download(
+    uri,
+    filePath,
+    function(entry) {
+        //WN.debug("download complete: " + entry.fullPath);
+        WN.file_cache_load();        
+    },
+    function(error) {
+        WN.debug("download error source " + error.source);
+        WN.debug("download error target " + error.target);
+        WN.debug("upload error code" + error.code);
+    }
+   );
+};
+
+WN.file_cache_load=function () {
+   WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.cache_prepare, WN.init_FS_fail);
+};
+WN.cache_prepare=function(fileEntry) {
+   //WN.debug("CONFIG... file entry");
+   fileEntry.file(WN.cache_read, WN.init_FS_fail);
+};
+
+WN.file_config_load=function () {
+   //WN.debug("LOAD... "+WN.bname_cache);
+   WN.gap_root.getFile(WN.bname_cache, {create: true, exclusive: false}, WN.config_prepare, WN.init_FS_fail);
+};
+WN.config_prepare=function(fileEntry) {
+   //WN.debug("CONFIG... file entry");
+   fileEntry.file(WN.config_read, WN.init_FS_fail);
+};
+WN.cache_empty=true;
+WN.config_text='';
+WN.config_text2='';
+WN.autoswitch=true;
+WN.happy2name='';
+WN.config_read=function(file) {
+   //WN.debug("CONFIG... file reader");
+
+   var reader = new FileReader();
+   // install read post processing
+   reader.onloadend=WN.config_read_process; 
+   // run reader
+   reader.readAsText(file);
+};
+WN.config_read_process=function(evt) {
+      //WN.debug("CONFIG... read as text");
+      WN.config_text=evt.target.result;
+      if (WN.config_text.length > 0) {
+         WN.cache_empty=false;
+
+         // activate code
+         WN.debug(WN.config_text);
+         // protect webview against links flood
+         WN.feed_post_process();
+
+         // get the appname from the feed
+         WN.happy2name=jQuery('#home .curfeed .happy').attr('data-name');
+         if (WN.happy2name) {
+            WN.app_active=WN.happy2name;
+            WN.server_uri= '/app=' + WN.app_active + '/';
+            jQuery("#app2search").val(WN.app_active);
+
+            // get fresh news ?
+            // ACTIVATE WEB SERVICE
+            WN.web_service_on(5000);
+         }
+
+         // load home page
+         if (WN.autoswitch) {
+            window.location.replace("#home");
+            WN.autoswitch=false;
+         }
+      }   
+};
+WN.cache_read=function(file) {
+   //WN.debug("CONFIG... file reader");
+
+   var reader = new FileReader();
+   // install read post processing
+   reader.onloadend=WN.config_read_process;
+   // run reader
+   reader.readAsText(file);
+};
+WN.config_read_process=function(evt) {
+      //WN.debug("CONFIG... read as text");
+      WN.config_text=evt.target.result;
+      if (WN.config_text.length > 0) {
+         WN.cache_empty=false;
+         // activate code
+         WN.debug(WN.config_text);
+         // protect webview against links flood
+         WN.feed_post_process();
+      }
+};
+WN.feed_post_process=function() {
+   jQuery(".curfeed .content a").attr("target", "_blank");
+};
+
+WN.init_FS_fail=function (evt) {
+   WN.debug(evt.target.error.code);
+};
+
+WN.debug_step=0;
+WN.debug=function(msg) {
+  WN.debug_step++;
+  //alert(WN.debug_step + '. ' +msg);
+  var element = document.getElementById('debug-info');
+  element.innerHTML+='<div>'+WN.debug_step+'. '+msg+'</div>';
+};
+
+
+WN.geo_ok=function (position) {
+   var msg='';
+   msg= 'Latitude: '           + position.coords.latitude              + '<br />' +
+        'Longitude: '          + position.coords.longitude             + '<br />' +
+        'Altitude: '           + position.coords.altitude              + '<br />' +
+        'Accuracy: '           + position.coords.accuracy              + '<br />' +
+        'Altitude Accuracy: '  + position.coords.altitudeAccuracy      + '<br />' +
+        'Heading: '            + position.coords.heading               + '<br />' +
+        'Speed: '              + position.coords.speed                 + '<br />' +
+        'Timestamp: '          + position.timestamp          + '<br />';
+
+   WN.debug(msg);
+   WN.server_uri= ''
+                 +'/app='+WN.app_active
+                 +'/lat='+position.coords.latitude
+                 +'/lon='+position.coords.longitude
+                 +'/alt='+position.coords.altitude
+                 +'/speed='+position.coords.speed
+                 +'/accu='+position.coords.accuracy
+                 +'/time='+position.timestamp
+                 +'/';
+};
+
+WN.geo_error=function (error) {
+   var msg='code: '+ error.code+ ', message: ' + error.message;
+   WN.debug(msg);         
+};
+
+
+// Wait for Cordova to load
+document.addEventListener("deviceready", WN.init_phonegap, false);
+// Wait for jQuery to load
+jQuery(WN.init_jquery);
+
+
+   </script>
+ </head>
+ <body>
+  <!--LOGIN-START-->
+  <div id="start" data-role="page" class="page">
+<div data-role="header" class="header">
+ <div class="title">
+  <h1><a href="#home">Start</a></h1>
+ </div>
+ <div class="banner">
+  <div class="device-zone">
+  <table style="width:80%;">
+   <tbody>
+    <tr>
+    <td>
+<input name="app-name" id="app2search" value="" placeholder="..." type="search" style="">
+    </td>
+    <td>
+<input name="app-ok" id="act-ok" data-icon="arrow-r" data-iconpos="left" value="OK" type="submit" data-inline="true" style="height:30px;">
+    </td>
+      </tr>
+   </tbody>
+  </table>
+ </div>
+ </div>
+</div>
+<div data-role="content" class="content">
+ <div class="server-zone"></div>
+</div>
+<div data-role="footer" class="footer">
+</div>
+  </div>
+  <!--LOGIN-END-->
+  <!--HOME-START-->
+  <div id="home" data-role="page" class="page">
+<div data-role="header" class="header">
+ <div class="title">
+  <h1><a href="#start">WebNews</a></h1>
+ </div>
+ <div class="banner">
+  <div id="device-info"></div>
+ </div>
+</div>
+<div data-role="content" class="content">
+ <div id="debug-info"></div>
+</div>
+<div data-role="footer" class="footer">
+</div>
+  </div>
+  <!--HOME-END-->
+ </body>
+</html>
