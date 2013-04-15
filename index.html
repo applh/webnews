@@ -432,6 +432,46 @@ jQuery(WN.init_jquery);
 
 
    </script>
+
+   <script type="text/javascript">
+WN.stage=null;
+WN.stageid="start-canvas";
+//Create a stage by getting a reference to the canvas
+WN.init_canvas=function() {
+
+    WN.stage = new createjs.Stage(WN.stageid);
+
+    //Create a Shape DisplayObject.
+    circle = new createjs.Shape();
+    circle.graphics.beginFill("#0099cc").drawCircle(0, 0, 40);
+
+    //Set position of Shape instance.
+    circle.x = WN.stage.canvas.width /2;
+    circle.y = WN.stage.canvas.height /2;
+
+    //Add Shape instance to stage display list.
+    WN.stage.addChild(circle);
+
+    //Update stage will render next frame
+    createjs.Ticker.setFPS(30);
+    createjs.Ticker.addEventListener("tick", WN.handleTick);
+}
+
+
+WN.handleTick=function() {
+     //Circle will move 10 units to the right.
+     circle.x += 10;
+     //Will cause the circle to wrap back
+     if (circle.x > WN.stage.canvas.width-40) { circle.x = 40; }
+
+     WN.stage.update();
+}
+
+jQuery(WN.init_canvas);
+
+</script>
+
+
  </head>
  <body>
   <!--LOGIN-START-->
@@ -441,6 +481,7 @@ jQuery(WN.init_jquery);
   <h1><a href="#home">Start</a></h1>
  </div>
  <div class="banner">
+
   <div class="device-zone">
   <table style="width:80%;min-height:400px;height:80%;">
    <tbody>
@@ -459,12 +500,17 @@ jQuery(WN.init_jquery);
    </tbody>
   </table>
  </div>
+
+
  </div>
 </div>
 <div data-role="content" class="content">
  <div class="server-zone"></div>
 </div>
 <div data-role="footer" class="footer">
+<div id="box-canvas" style="margin:0 auto;width:640px;height:320px;">
+   <canvas id="start-canvas" width="640" height="320" style="background-color:transparent"></canvas>
+</div>
 </div>
   </div>
   <!--LOGIN-END-->
@@ -482,6 +528,9 @@ jQuery(WN.init_jquery);
  <div id="debug-info"></div>
 </div>
 <div data-role="footer" class="footer">
+<div class="box-canvas" style="margin:0 auto;width:640px;height:320px;">
+   <canvas id="home-canvas" width="640" height="320" style="background-color:transparent"></canvas>
+</div>
 </div>
   </div>
   <!--HOME-END-->
