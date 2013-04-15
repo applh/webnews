@@ -435,28 +435,44 @@ jQuery(WN.init_jquery);
 
    <script type="text/javascript">
 WN.stage=null;
-WN.stageid="start-canvas";
+WN.stageid="start";
+WN.canvas2html='';
+
 //Create a stage by getting a reference to the canvas
 WN.init_canvas=function() {
 
-    WN.stage = new createjs.Stage(WN.stageid);
+   var boxc='#box-canvas-'+WN.stageid;
 
-    //Create a Shape DisplayObject.
-    circle = new createjs.Shape();
-    circle.graphics.beginFill("#0099cc").drawCircle(0, 0, 40);
+   var cw=jQuery(boxc).width();
+   var ch=jQuery(window).height()/2;
 
-    //Set position of Shape instance.
-    circle.x = WN.stage.canvas.width /2;
-    circle.y = WN.stage.canvas.height /2;
+   WN.canvas2html='<canvas id="canvas-'+WN.stageid+'" width="'+cw+'" height="'+ch+'" style="background-color:transparent"></canvas>';
+   jQuery(boxc).html(WN.canvas2html);
 
-    //Add Shape instance to stage display list.
-    WN.stage.addChild(circle);
+   WN.stage = new createjs.Stage("canvas-"+WN.stageid);
 
-    //Update stage will render next frame
-    createjs.Ticker.setFPS(30);
-    createjs.Ticker.addEventListener("tick", WN.handleTick);
+   //Update stage will render next frame
+   createjs.Ticker.setFPS(25);
 }
 
+
+WN.init_scene=function () {
+   //Create a Shape DisplayObject.
+   circle = new createjs.Shape();
+   circle.graphics.beginFill("#0099cc").drawCircle(0, 0, 40);
+
+   //Set position of Shape instance.
+   circle.x = WN.stage.canvas.width /2;
+   circle.y = WN.stage.canvas.height /2;
+
+   //Add Shape instance to stage display list.
+   WN.stage.addChild(circle);
+   createjs.Ticker.addEventListener("tick", WN.handleTick);
+};
+
+WN.canvas2clear=function() {
+   WN.stage.clear();
+};
 
 WN.handleTick=function() {
      //Circle will move 10 units to the right.
@@ -466,6 +482,9 @@ WN.handleTick=function() {
 
      WN.stage.update();
 }
+
+jQuery(WN.init_canvas);
+jQuery(WN.init_scene);
 
 </script>
 
@@ -506,8 +525,7 @@ WN.handleTick=function() {
  <div class="server-zone"></div>
 </div>
 <div data-role="footer" class="footer">
-<div id="box-canvas" style="margin:0 auto;width:640px;height:320px;">
-   <canvas id="start-canvas" width="640" height="320" style="background-color:transparent"></canvas>
+<div id="box-canvas-start" style="margin:0 auto;">
 </div>
 </div>
   </div>
@@ -526,8 +544,7 @@ WN.handleTick=function() {
  <div id="debug-info"></div>
 </div>
 <div data-role="footer" class="footer">
-<div class="box-canvas" style="margin:0 auto;width:640px;height:320px;">
-   <canvas id="home-canvas" width="640" height="320" style="background-color:transparent"></canvas>
+<div id="box-canvas-home" style="margin:0 auto;">
 </div>
 </div>
   </div>
