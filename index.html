@@ -307,7 +307,7 @@ WN.config_read=function(file) {
    // install read post processing
    reader.onloadend=WN.config_read_process; 
    // run reader
-   reader.readAsText(file);
+   // reader.readAsText(file);
 };
 WN.config_read_process=function(evt) {
       //WN.debug("CONFIG... read as text");
