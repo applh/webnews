@@ -16,6 +16,6 @@ http://build.phonegap.com/docs/preparing-your-app
 
 http://build.phonegap.com/docs/config-xml
 
-http://docs.phonegap.com/en/2.2.0/
+http://docs.phonegap.com/en/2.5.0/
 
-
+https://build.phonegap.com/blog/access-tags
