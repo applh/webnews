@@ -437,6 +437,7 @@ jQuery(WN.init_jquery);
 WN.stage=null;
 WN.stageid="start";
 WN.canvas2html='';
+WN.cdx=1;
 
 //Create a stage by getting a reference to the canvas
 WN.init_canvas=function() {
@@ -446,10 +447,14 @@ WN.init_canvas=function() {
    var cw=jQuery(boxc).width();
    var ch=jQuery(window).height()/2;
 
+   WN.cdx=cw/100;
+
    WN.canvas2html='<canvas id="canvas-'+WN.stageid+'" width="'+cw+'" height="'+ch+'" style="background-color:transparent"></canvas>';
    jQuery(boxc).html(WN.canvas2html);
 
    WN.stage = new createjs.Stage("canvas-"+WN.stageid);
+
+   WN.stage.autoClear=true;
 
    //Update stage will render next frame
    createjs.Ticker.setFPS(25);
@@ -476,9 +481,10 @@ WN.canvas2clear=function() {
 
 WN.handleTick=function() {
      //Circle will move 10 units to the right.
-     circle.x += 10;
+     circle.x += WN.cdx;
      //Will cause the circle to wrap back
-     if (circle.x > WN.stage.canvas.width-40) { circle.x = 40; }
+     if (circle.x > WN.stage.canvas.width-40) { WN.cdx=-WN.cdx; }
+     if (circle.x < 40) { WN.cdx=-WN.cdx; }
 
      WN.stage.update();
 }
