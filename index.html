@@ -480,11 +480,11 @@ WN.canvas2clear=function() {
 };
 
 WN.handleTick=function() {
-     //Circle will move 10 units to the right.
+     //Circle will move to the right/left.
      circle.x += WN.cdx;
      //Will cause the circle to wrap back
-     if (circle.x > WN.stage.canvas.width-40) { WN.cdx=-WN.cdx; }
-     if (circle.x < 40) { WN.cdx=-WN.cdx; }
+     if (circle.x > WN.stage.canvas.width) { WN.cdx=-WN.cdx; }
+     if (circle.x < 0) { WN.cdx=-WN.cdx; }
 
      WN.stage.update();
 }
