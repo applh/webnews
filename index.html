@@ -453,15 +453,24 @@ WN.init_canvas=function() {
    jQuery(boxc).html(WN.canvas2html);
 
    WN.stage = new createjs.Stage("canvas-"+WN.stageid);
+   WN.stage.autoClear=false;
 
-   WN.stage.autoClear=true;
+   WN.stage.removeAllChildren();
 
    //Update stage will render next frame
    createjs.Ticker.setFPS(25);
 }
 
 
+WN.cbg = null;
 WN.init_scene=function () {
+   //Create a Shape DisplayObject.
+   WN.cbg = new createjs.Shape();
+   WN.cbg.graphics.beginFill("#33b5e5").drawRect(0, 0, WN.stage.canvas.width, WN.stage.canvas.height);
+   WN.stage.addChild(WN.cbg);
+   WN.cbg.x=0;
+   WN.cbg.y=0;
+ 
    //Create a Shape DisplayObject.
    circle = new createjs.Shape();
    circle.graphics.beginFill("#0099cc").drawCircle(0, 0, 40);
@@ -472,25 +481,44 @@ WN.init_scene=function () {
 
    //Add Shape instance to stage display list.
    WN.stage.addChild(circle);
-   createjs.Ticker.addEventListener("tick", WN.handleTick);
+   createjs.Ticker.removeAllListeners();
+   createjs.Ticker.addEventListener("tick", WN.canvas2update);
+};
+
+WN.canvas2animate=function() {
+   //Circle will move to the right/left.
+   circle.x += WN.cdx;
+   //Will cause the circle to wrap back
+   if (circle.x > WN.stage.canvas.width) { WN.cdx=-WN.cdx; }
+   if (circle.x < 0) { WN.cdx=-WN.cdx; }
+
 };
 
 WN.canvas2clear=function() {
    WN.stage.clear();
 };
 
-WN.handleTick=function() {
-     //Circle will move to the right/left.
-     circle.x += WN.cdx;
-     //Will cause the circle to wrap back
-     if (circle.x > WN.stage.canvas.width) { WN.cdx=-WN.cdx; }
-     if (circle.x < 0) { WN.cdx=-WN.cdx; }
-
-     WN.stage.update();
+WN.canvas2update=function() {
+   WN.stage.clear();
+   WN.canvas2animate();
+   WN.stage.update();
 }
+
+WN.canvas2resize=function () {
+   var boxc='#box-canvas-'+WN.stageid;
+   var bchtml=jQuery(boxc).html().trim();
+   var cw=jQuery(boxc).width();
+
+   if (!bchtml || (WN.stage.canvas.width != cw)) {
+      WN.canvas2clear();
+      WN.init_canvas();
+      WN.init_scene();
+   }  
+};
 
 jQuery(WN.init_canvas);
 jQuery(WN.init_scene);
+jQuery(window).resize(WN.canvas2resize);
 
 </script>
 
