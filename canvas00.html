@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Drawing</title>
+        <style type="text/css">
+            html, body {
+                background: transparent;
+            }
+        </style>
+        <script src="js/sketch.js"></script>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script>
+
+        var COLOURS = [ '#E3EB64', '#A7EBCA', '#FFFFFF', '#D8EBA7', '#868E80' ];
+        var radius = 0;
+
+   var ox2=0, oy2=0;
+   var dx1=0, dy1=0;
+   var dx2=0, dy2=0;
+
+        var demo = Sketch.create({
+
+            container: document.getElementById( 'container' ),
+            autoclear: false,
+            retina: true,
+
+            setup: function() {
+                console.log( 'setup' );
+            },
+
+            update: function() {
+                //radius = 2 + Math.abs( Math.sin( demo.millis * 0.003 ) * 50 );
+                radius = 2 + Math.abs( Math.sin( demo.millis * 0.003 ) * 5 );
+            },
+
+            // Event handlers
+
+            keydown: function() {
+                if ( demo.keys.C ) demo.clear();
+            },
+
+            // Mouse & touch events are merged, so handling touch events by default
+            // and powering sketches using the touches array is recommended for easy
+            // scalability. If you only need to handle the mouse / desktop browsers,
+            // use the 0th touch element and you get wider device support for free.
+            touchmove: function( e ) {
+
+                for ( var i = demo.touches.length - 1, touch; i >= 0; i-- ) {
+
+                    touch = demo.touches[i];
+
+                    demo.lineCap = 'round';
+                    demo.lineJoin = 'round';
+                    demo.lineWidth = radius;
+                    demo.globalAlpha = 0.5 + 0.5*Math.random();
+
+                    demo.beginPath();
+                    if ((ox2 == 0) && (oy2 == 0)) {
+                        demo.fillStyle = demo.strokeStyle = COLOURS[ i % COLOURS.length ];
+                        demo.moveTo( touch.ox, touch.oy );
+                        demo.lineTo( touch.x, touch.y );
+                        demo.stroke();
+                    }
+                    else {
+                        demo.moveTo( touch.ox, touch.oy );
+                        demo.fillStyle = demo.strokeStyle = COLOURS[ i % COLOURS.length ];
+                        //demo.quadraticCurveTo( touch.ox + dx, touch.oy +dy, touch.x, touch.y );
+                        demo.bezierCurveTo( ox2+dx1, oy2+dy1, touch.ox -dx2, touch.oy -dy2, touch.ox, touch.oy );
+                        demo.stroke();
+                    }
+                    if ((dx2 != 0) && (dy2 !=0)) {
+                       dx1=dx2;
+                       dy1=dy2;
+                    }
+                    dx2=touch.x-touch.ox;
+                    dy2=touch.y-touch.oy;
+                    //ox2=touch.ox;
+                    //oy2=touch.oy;
+
+                }
+            }
+        });
+
+        demo.start();
+        
+        </script>
+    </body>
+</html>
+

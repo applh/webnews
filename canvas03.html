@@ -10,7 +10,7 @@
         </style>
     </head>
     <body>
-        <div id="container"></div>
+        <div id="container" style=""></div>
         <header class="info">
             <hgroup class="about">
                 <h3><a href="index.html">Start drawing!</a></h3>
@@ -83,7 +83,8 @@
 
         var demo = Sketch.create({
             container: document.getElementById( 'container' ),
-            retina: true
+            fullscreen: true,
+            retina: true,
         });
 
         demo.setup = function() {
