@@ -458,9 +458,10 @@ WN.init_canvas=function() {
    WN.canvas2html='<canvas id="canvas-'+WN.stageid+'" width="'+cw+'" height="'+ch+'" style="background-color:transparent"></canvas>';
    jQuery(boxc).html(WN.canvas2html);
 
-   var canvas = document.getElementById('canvas-'+WN.stageid);
-   canvas.addEventListener("touchstart", function(e) { e.preventDefault(); }, false);
-   canvas.addEventListener("touchend", function(e) { e.preventDefault(); }, false);
+   //FIXME iOS blocking events
+   //var canvas = document.getElementById('canvas-'+WN.stageid);
+   //canvas.addEventListener("touchstart", function(e) { e.preventDefault(); }, false);
+   //canvas.addEventListener("touchend", function(e) { e.preventDefault(); }, false);
  
    WN.stage = new createjs.Stage("canvas-"+WN.stageid);
    WN.stage.autoClear=false;
