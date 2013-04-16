@@ -465,7 +465,9 @@ WN.init_canvas=function() {
  
    WN.stage = new createjs.Stage("canvas-"+WN.stageid);
    WN.stage.autoClear=false;
-
+   WN.stage.enableDOMEvents(true);
+   createjs.Touch.enable(WN.stage);
+ 
    WN.stageH=ch;
    WN.stageW=cw;
 
@@ -557,7 +559,8 @@ WN.action2mousedown = function (event) {
    var cf=WN.color2rand();
    var sw=Math.round(20+0.2*WN.stageW*Math.random());
    var sr=Math.round(5+15*Math.random());
-   var salt=Math.round(-WN.stageH*.5*(1+Math.random()));
+   //var salt=Math.round(-WN.stageH*.5*(1+Math.random()));
+   var salt=smy-WN.stageH;
    var sangle=Math.round(180*Math.random()-90);
    var cpx1=Math.round(-sw*Math.random());
    var cpy1=Math.round((smy -WN.stageH)*Math.random());
