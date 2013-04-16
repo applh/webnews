@@ -443,6 +443,8 @@ WN.stageid="start";
 WN.canvas2html='';
 WN.cdx=1;
 
+WN.stageH=0;
+WN.stageW=0;
 //Create a stage by getting a reference to the canvas
 WN.init_canvas=function() {
 
@@ -459,10 +461,16 @@ WN.init_canvas=function() {
    WN.stage = new createjs.Stage("canvas-"+WN.stageid);
    WN.stage.autoClear=false;
 
+   WN.stageH=ch;
+   WN.stageW=cw;
+
    WN.stage.removeAllChildren();
 
    //Update stage will render next frame
    createjs.Ticker.setFPS(25);
+
+   WN.stage.addEventListener("stagemousedown", WN.action2mousedown);
+   
 }
 
 
@@ -522,6 +530,46 @@ WN.canvas2resize=function () {
       WN.init_canvas();
       WN.init_scene();
    }  
+};
+
+WN.color2rand=function() {
+   var r=Math.round(150+100*Math.random());
+   var g=Math.round(150+100*Math.random());
+   var b=Math.round(150+100*Math.random());
+   var c='rgb('+r+','+g+','+b+')';
+   return c;
+};
+WN.curshape=null;
+WN.action2mousedown = function (event) {
+      
+   var smx=event.stageX;
+   var smy=event.stageY;
+
+   WN.curshape = new createjs.Shape();
+   //WN.curshape.graphics.beginFill("#ff0000").drawRect(0, 0, 10, 10);
+   var cf=WN.color2rand();
+   var sw=Math.round(20+100*Math.random());
+   var sr=Math.round(5+15*Math.random());
+   var salt=Math.round(-WN.stageH*.5*(1+Math.random()));
+   var sangle=Math.round(180*Math.random()-90);
+   var cpx1=Math.round(-sw*Math.random());
+   var cpy1=Math.round((smy -WN.stageH)*Math.random());
+   var cpx2=Math.round(sw*Math.random());
+   var cpy2=Math.round((smy -WN.stageH)*Math.random());
+   WN.curshape.graphics
+      .beginFill(cf)
+      .moveTo(0, -WN.stageY/2).drawPolyStar(0, salt, sr, 5, .5, sangle)
+      .beginFill(cf)
+      //.moveTo(-sw, 0).quadraticCurveTo(cpx1, cpy1, sw, 0)
+      .moveTo(-sw, 0).bezierCurveTo(cpx1, cpy1, cpx2, cpy2, sw, 0)
+      ;
+
+   WN.stage.addChild(WN.curshape);
+   WN.curshape.x=smx;
+   WN.curshape.y=WN.stageH;
+   WN.curshape.alpha=.1*Math.round(1+5*Math.random());
+    
+ 
 };
 
 jQuery(WN.init_canvas);
