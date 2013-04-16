@@ -451,7 +451,7 @@ WN.init_canvas=function() {
    var boxc='#box-canvas-'+WN.stageid;
 
    var cw=jQuery(boxc).width();
-   var ch=jQuery(window).height()/3; // for Android 1280x720
+   var ch=Math.round(0.40*jQuery(window).height()); // for Android 1280x720
 
    WN.cdx=cw/250;
 
@@ -558,7 +558,7 @@ WN.action2mousedown = function (event) {
    //WN.curshape.graphics.beginFill("#ff0000").drawRect(0, 0, 10, 10);
    var cf=WN.color2rand();
    var sw=Math.round(20+0.2*WN.stageW*Math.random());
-   var sr=Math.round(5+10*Math.random());
+   var sr=Math.round(WN.stageH*.02*(1+Math.random()));
    //var salt=Math.round(-WN.stageH*.5*(1+Math.random()));
    var salt=smy-WN.stageH;
    var sangle=Math.round(180*Math.random()-90);
