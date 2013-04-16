@@ -558,14 +558,14 @@ WN.action2mousedown = function (event) {
    //WN.curshape.graphics.beginFill("#ff0000").drawRect(0, 0, 10, 10);
    var cf=WN.color2rand();
    var sw=Math.round(20+0.2*WN.stageW*Math.random());
-   var sr=Math.round(5+15*Math.random());
+   var sr=Math.round(5+10*Math.random());
    //var salt=Math.round(-WN.stageH*.5*(1+Math.random()));
    var salt=smy-WN.stageH;
    var sangle=Math.round(180*Math.random()-90);
    var cpx1=Math.round(-sw*Math.random());
-   var cpy1=Math.round((smy -WN.stageH)*Math.random());
+   var cpy1=Math.round((smy -.3*WN.stageH)*Math.random());
    var cpx2=Math.round(sw*Math.random());
-   var cpy2=Math.round((smy -WN.stageH)*Math.random());
+   var cpy2=Math.round((smy -.3*WN.stageH)*Math.random());
    WN.curshape.graphics
       .beginFill(cf)
       .moveTo(0, -WN.stageY/2)
@@ -578,7 +578,7 @@ WN.action2mousedown = function (event) {
    WN.stage.addChild(WN.curshape);
    WN.curshape.x=smx;
    WN.curshape.y=WN.stageH;
-   WN.curshape.alpha=.1*Math.round(1+5*Math.random());
+   WN.curshape.alpha=.1*Math.round(3+5*Math.random());
     
  
 };
