@@ -390,7 +390,7 @@ WN.childb2click=function(event) {
 
 WN.feed_post_process=function() {
    jQuery(".curfeed .content a").attr("target", "_blank");
-   jQuery(".curfeed .content a").click(WN.childb2click);
+   jQuery(".curfeed a").click(WN.childb2click);
 };
 
 WN.init_FS_fail=function (evt) {
