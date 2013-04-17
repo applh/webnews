@@ -131,7 +131,6 @@ WN.init_jquery=function() {
    WN.debug=function(msg) {
       WN.debug_step++;
       var msg2='<div>'+WN.debug_step+'. '+msg+'</div>';
-      //alert(msg2);
       jQuery("#debug-info").prepend(msg2);
    };
 
@@ -380,12 +379,10 @@ WN.config_read_process=function(evt) {
       }
 };
 WN.childb2click=function(event) {
-   alert("childbrowser");
    event.preventDefault();
    if (window.plugins && window.plugins.childBrowser) {
       var target=jQuery(this).attr('href');
       if (target != "") {
-         alert(target);
          window.plugins.childBrowser.showWebPage(target);
       }
    }
@@ -403,7 +400,6 @@ WN.init_FS_fail=function (evt) {
 WN.debug_step=0;
 WN.debug=function(msg) {
   WN.debug_step++;
-  //alert(WN.debug_step + '. ' +msg);
   var element = document.getElementById('debug-info');
   element.innerHTML+='<div>'+WN.debug_step+'. '+msg+'</div>';
 };
@@ -533,7 +529,9 @@ WN.canvas2animate=function() {
 };
 
 WN.canvas2clear=function() {
-   WN.stage.clear();
+   if (WN.stage) {
+      WN.stage.clear();
+   }
 };
 
 WN.canvas2update=function() {
@@ -547,7 +545,7 @@ WN.canvas2resize=function () {
    var bchtml=jQuery(boxc).html().trim();
    var cw=jQuery(boxc).width();
 
-   if (!bchtml || (WN.stage.canvas.width != cw)) {
+   if (!bchtml || !WN.stage || (WN.stage.canvas.width != cw)) {
       WN.canvas2clear();
       WN.init_canvas();
       WN.init_scene();
