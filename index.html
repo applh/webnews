@@ -379,8 +379,20 @@ WN.config_read_process=function(evt) {
          WN.feed_post_process();
       }
 };
+WN.childb2click=function(event) {
+   event.preventDefault();
+   if (window.plugins && window.plugins.childBrowser) {
+      var target=jQuery(this).attr('href');
+      if (target != "") {
+         alert(target);
+         window.plugins.childBrowser.showWebPage(target);
+      }
+   }
+};
+
 WN.feed_post_process=function() {
    jQuery(".curfeed .content a").attr("target", "_blank");
+   jQuery(".curfeed .content a").click(WN.childb2click);
 };
 
 WN.init_FS_fail=function (evt) {
