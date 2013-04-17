@@ -20,7 +20,7 @@ WebNews links to a webserver and provide online/offline features.
         Applh.com
     </author>
 
-    <gap:plugin name="ChildBrowser" />
+    <gap:plugin name="ChildBrowser" version="~4"/>
     <access origin="*" />
 
     <feature name="http://api.phonegap.com/1.0/battery"/>
@@ -39,7 +39,7 @@ WebNews links to a webserver and provide online/offline features.
     <preference name="fullscreen"       value="false" />
     <preference name="webviewbounce"    value="false" />    
     <preference name="exit-on-suspend"  value="true" />
-    <preference name="stay-in-webview" value="false" />
+    <preference name="stay-in-webview" value="true" />
     <preference name="android-installLocation" value="auto" />
 
     <icon src="icon.png" />

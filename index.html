@@ -118,8 +118,8 @@ margin-bottom:0px;
     <script type="text/javascript" src="src/easeljs/ui/Touch.js"></script>
 
 
-   <script src="phonegap.js"></script>
-   <script src="childbrowser.js"></script>
+   <script type="text/javascript" src="phonegap.js"></script>
+   <script type="text/javascript" src="childbrowser.js"></script>
 
    <script type="text/javascript" charset="utf-8">
 var WN={};
@@ -380,6 +380,7 @@ WN.config_read_process=function(evt) {
       }
 };
 WN.childb2click=function(event) {
+   alert("childbrowser");
    event.preventDefault();
    if (window.plugins && window.plugins.childBrowser) {
       var target=jQuery(this).attr('href');
