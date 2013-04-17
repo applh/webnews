@@ -267,14 +267,17 @@ WN.server_download=function() {
    WN.network = navigator.network.connection.type;
    if (WN.network == Connection.NONE) {
       WN.debug("No Connection...");
+      WN.file_cache_load();        
       return;
    }
    if (WN.network == Connection.UNKNOWN) {
       WN.debug("Unknown Connection...");
+      WN.file_cache_load();        
       return;
    }
    if (!WN.phonegap_ok) {
       WN.debug("phonegap not ready...");
+      WN.file_cache_load();        
       return;
    }
 
